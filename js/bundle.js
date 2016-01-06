@@ -48,8 +48,9 @@
 	
 	__webpack_require__(1);
 	__webpack_require__(5);
-	var Packer = __webpack_require__(12);
-	var Clipboard = __webpack_require__(13);
+	var Clipboard = __webpack_require__(12);
+	var Packer = __webpack_require__(21);
+	var debounce = __webpack_require__(22);
 	
 	/*
 	 * Files Selector
@@ -106,9 +107,9 @@
 	    }
 	});
 	
-	prefixElem.addEventListener('keyup', updateValues);
-	paddingElem.addEventListener('keyup', updateValues);
-	pathElem.addEventListener('keyup', updateValues);
+	prefixElem.addEventListener('keyup', debounce(updateValues, 250));
+	paddingElem.addEventListener('keyup', debounce(updateValues, 250));
+	pathElem.addEventListener('keyup', debounce(updateValues, 250));
 	
 	function updateValues() {
 	    prefix = prefixElem.value;
@@ -196,9 +197,7 @@
 	}
 	
 	function loadComplete() {
-	    //console.log('load complete');
 	    var packer = new Packer(padding, prefix, path);
-	    //var packer = new GrowingPacker();
 	    packer.sort(blocks);
 	    packer.fit(blocks);
 	    packer.draw(blocks, canvas, css);
@@ -217,7 +216,6 @@
 	            id: id
 	        });
 	        loaded++;
-	        //console.log(loaded, queue);
 	        if (loaded === queue) {
 	            loadComplete();
 	        }
@@ -235,17 +233,6 @@
 	}, false);
 	
 	var clipboard = new Clipboard('#copy');
-	
-	//clipboard.on('success', function(e) {
-	//    console.info('Action:', e.action);
-	//    console.info('Text:', e.text);
-	//    console.info('Trigger:', e.trigger);
-	//});
-	//
-	//clipboard.on('error', function(e) {
-	//    console.error('Action:', e.action);
-	//    console.error('Trigger:', e.trigger);
-	//});
 
 /***/ },
 /* 1 */
@@ -669,132 +656,6 @@
 
 /***/ },
 /* 12 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	function Packer(pad, pre, path) {
-	    this.init(pad, pre, path);
-	}
-	
-	Packer.prototype = {
-	
-	    init: function init(pad, pre, path) {
-	        var padding = isNumeric(pad) ? pad : 2;
-	        padding = Math.round(Math.abs(padding));
-	        this.root = {
-	            x: 0, // origin x
-	            y: 0, // origin y
-	            w: 256 - padding, // width
-	            h: 256 - padding, // height
-	            p: padding
-	        };
-	        this.prefix = pre;
-	        //this.prefix = this.prefix.replace(/ /g, '');
-	        this.path = path;
-	    },
-	
-	    sort: function sort(blocks) {
-	        blocks.sort(function (a, b) {
-	            // should this be sorted by height?
-	            if (a.h < b.h) {
-	                return 1;
-	            }
-	            if (a.h > b.h) {
-	                return -1;
-	            }
-	            return 0;
-	        });
-	    },
-	
-	    fit: function fit(blocks) {
-	        var n,
-	            node,
-	            block,
-	            p = this.root.p;
-	        for (n = 0; n < blocks.length; n++) {
-	            block = blocks[n];
-	            block.fit = false; // reset
-	            if (node = this.findNode(this.root, block.w + p, block.h + p)) {
-	                block.fit = this.splitNode(node, block.w + p, block.h + p);
-	            }
-	            if (!block.fit) {
-	                this.resize(blocks);
-	                break;
-	            }
-	        }
-	    },
-	
-	    resize: function resize(blocks) {
-	        var w,
-	            h,
-	            p = this.root.p;
-	        if (this.root.w > this.root.h) {
-	            w = this.root.w + p;
-	            h = (this.root.h + p) * 2;
-	        } else {
-	            w = (this.root.w + p) * 2;
-	            h = this.root.h + p;
-	        }
-	        this.root = {
-	            x: 0, // origin x
-	            y: 0, // origin y
-	            w: w - p, // width
-	            h: h - p, // height
-	            p: p
-	        };
-	        this.fit(blocks);
-	    },
-	
-	    findNode: function findNode(root, w, h) {
-	        if (root.used) return this.findNode(root.right, w, h) || this.findNode(root.down, w, h);else if (w <= root.w && h <= root.h) return root;else return null;
-	    },
-	
-	    splitNode: function splitNode(node, w, h) {
-	        node.used = true;
-	        node.down = { x: node.x, y: node.y + h, w: node.w, h: node.h - h };
-	        node.right = { x: node.x + w, y: node.y, w: node.w - w, h: h };
-	        return node;
-	    },
-	
-	    draw: function draw(blocks, canvas, output) {
-	        var ctx = canvas.getContext('2d');
-	        var groupSelectors = '';
-	        var globalStyle = '\n{display:inline-block; overflow:hidden; background-repeat: ' + 'no-repeat;background-image:url(' + this.path + ');}\n\n\n';
-	        var spriteStyle = '';
-	        var p = this.root.p; // padding
-	        var width = this.root.w + p;
-	        var height = this.root.h + p;
-	        var b; // block
-	        canvas.width = width;
-	        canvas.height = height;
-	        ctx.clearRect(0, 0, canvas.width, canvas.height);
-	        for (var n = 0; n < blocks.length; n++) {
-	            b = blocks[n];
-	            if (b.fit) {
-	                // turn on for testing
-	                //ctx.fillRect(b.fit.x + p, b.fit.y + p, b.w, b.h);
-	                //ctx.stroke();
-	                ctx.drawImage(b.img, b.fit.x + p, b.fit.y + p);
-	                // add comma if not the last style
-	                groupSelectors += '.' + this.prefix + b.name + (n === blocks.length - 1 ? ' ' : ', ');
-	                // individual sprite style
-	                spriteStyle += '.' + this.prefix + b.name + ' {width:' + b.w + 'px; ' + 'height:' + b.h + 'px; ' + 'background-position:' + ((b.fit.x + p) / (width - b.w) * 100).toPrecision(6) + '% ' + ((b.fit.y + p) / (height - b.h) * 100).toPrecision(6) + '%; ' + 'background-size:' + (width / b.w * 100).toPrecision(6) + '%; ' + '}\n';
-	            }
-	        }
-	        output.value = groupSelectors + globalStyle + spriteStyle;
-	    }
-	
-	};
-	
-	function isNumeric(n) {
-	    return !isNaN(parseFloat(n)) && isFinite(n);
-	}
-	
-	module.exports = Packer;
-
-/***/ },
-/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -807,15 +668,15 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var _clipboardAction = __webpack_require__(14);
+	var _clipboardAction = __webpack_require__(13);
 	
 	var _clipboardAction2 = _interopRequireDefault(_clipboardAction);
 	
-	var _tinyEmitter = __webpack_require__(16);
+	var _tinyEmitter = __webpack_require__(15);
 	
 	var _tinyEmitter2 = _interopRequireDefault(_tinyEmitter);
 	
-	var _goodListener = __webpack_require__(17);
+	var _goodListener = __webpack_require__(16);
 	
 	var _goodListener2 = _interopRequireDefault(_goodListener);
 	
@@ -956,7 +817,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -969,7 +830,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _select = __webpack_require__(15);
+	var _select = __webpack_require__(14);
 	
 	var _select2 = _interopRequireDefault(_select);
 	
@@ -1193,7 +1054,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports) {
 
 	function select(element) {
@@ -1227,7 +1088,7 @@
 
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports) {
 
 	function E () {
@@ -1299,11 +1160,11 @@
 
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var is = __webpack_require__(18);
-	var delegate = __webpack_require__(19);
+	var is = __webpack_require__(17);
+	var delegate = __webpack_require__(18);
 	
 	/**
 	 * Validates all params and calls the right
@@ -1400,7 +1261,7 @@
 
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports) {
 
 	/**
@@ -1455,10 +1316,10 @@
 
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var closest = __webpack_require__(20);
+	var closest = __webpack_require__(19);
 	
 	/**
 	 * Delegates event to a selector.
@@ -1504,10 +1365,10 @@
 
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var matches = __webpack_require__(21)
+	var matches = __webpack_require__(20)
 	
 	module.exports = function (element, selector, checkYoSelf) {
 	  var parent = checkYoSelf ? element : element.parentNode
@@ -1520,7 +1381,7 @@
 
 
 /***/ },
-/* 21 */
+/* 20 */
 /***/ function(module, exports) {
 
 	
@@ -1563,6 +1424,161 @@
 	  }
 	  return false;
 	}
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	function Packer(pad, pre, path) {
+	    this.init(pad, pre, path);
+	}
+	
+	Packer.prototype = {
+	
+	    init: function init(pad, pre, path) {
+	        var padding = isNumeric(pad) ? pad : 2;
+	        padding = Math.round(Math.abs(padding));
+	        this.root = {
+	            x: 0, // origin x
+	            y: 0, // origin y
+	            w: 256 - padding, // width
+	            h: 256 - padding, // height
+	            p: padding
+	        };
+	        this.prefix = pre;
+	        //this.prefix = this.prefix.replace(/ /g, '');
+	        this.path = path;
+	    },
+	
+	    sort: function sort(blocks) {
+	        blocks.sort(function (a, b) {
+	            // should this be sorted by height?
+	            if (a.h < b.h) {
+	                return 1;
+	            }
+	            if (a.h > b.h) {
+	                return -1;
+	            }
+	            return 0;
+	        });
+	    },
+	
+	    fit: function fit(blocks) {
+	        var n,
+	            node,
+	            block,
+	            p = this.root.p;
+	        for (n = 0; n < blocks.length; n++) {
+	            block = blocks[n];
+	            block.fit = false; // reset
+	            if (node = this.findNode(this.root, block.w + p, block.h + p)) {
+	                block.fit = this.splitNode(node, block.w + p, block.h + p);
+	            }
+	            if (!block.fit) {
+	                this.resize(blocks);
+	                break;
+	            }
+	        }
+	    },
+	
+	    resize: function resize(blocks) {
+	        var w,
+	            h,
+	            p = this.root.p;
+	        if (this.root.w > this.root.h) {
+	            w = this.root.w + p;
+	            h = (this.root.h + p) * 2;
+	        } else {
+	            w = (this.root.w + p) * 2;
+	            h = this.root.h + p;
+	        }
+	        this.root = {
+	            x: 0, // origin x
+	            y: 0, // origin y
+	            w: w - p, // width
+	            h: h - p, // height
+	            p: p
+	        };
+	        this.fit(blocks);
+	    },
+	
+	    findNode: function findNode(root, w, h) {
+	        if (root.used) return this.findNode(root.right, w, h) || this.findNode(root.down, w, h);else if (w <= root.w && h <= root.h) return root;else return null;
+	    },
+	
+	    splitNode: function splitNode(node, w, h) {
+	        node.used = true;
+	        node.down = { x: node.x, y: node.y + h, w: node.w, h: node.h - h };
+	        node.right = { x: node.x + w, y: node.y, w: node.w - w, h: h };
+	        return node;
+	    },
+	
+	    draw: function draw(blocks, canvas, output) {
+	        var ctx = canvas.getContext('2d');
+	        var gitubUrl = '/*\nResponsive CSS Sprite created using: ' + 'http://eivers88.github.io/responsive-css-sprite-generator/\n' + '*/\n\n';
+	        var groupSelectors = '';
+	        var globalStyle = '\n{display:inline-block; overflow:hidden; background-repeat: ' + 'no-repeat;background-image:url(' + this.path + ');}\n\n';
+	        var spriteStyle = '';
+	        var p = this.root.p; // padding
+	        var width = this.root.w + p;
+	        var height = this.root.h + p;
+	        var b; // block
+	        canvas.width = width;
+	        canvas.height = height;
+	        ctx.clearRect(0, 0, canvas.width, canvas.height);
+	        for (var n = 0; n < blocks.length; n++) {
+	            b = blocks[n];
+	            if (b.fit) {
+	                // turn on for testing
+	                //ctx.fillRect(b.fit.x + p, b.fit.y + p, b.w, b.h);
+	                //ctx.stroke();
+	                ctx.drawImage(b.img, b.fit.x + p, b.fit.y + p);
+	                // add comma if not the last style
+	                groupSelectors += '.' + this.prefix + b.name + (n === blocks.length - 1 ? ' ' : ', ');
+	                // individual sprite style
+	                spriteStyle += '.' + this.prefix + b.name + ' {width:' + b.w + 'px; ' + 'height:' + b.h + 'px; ' + 'background-position:' + ((b.fit.x + p) / (width - b.w) * 100).toPrecision(6) + '% ' + ((b.fit.y + p) / (height - b.h) * 100).toPrecision(6) + '%; ' + 'background-size:' + (width / b.w * 100).toPrecision(6) + '%; ' + '}\n';
+	            }
+	        }
+	        output.value = gitubUrl + groupSelectors + globalStyle + spriteStyle;
+	    }
+	
+	};
+	
+	function isNumeric(n) {
+	    return !isNaN(parseFloat(n)) && isFinite(n);
+	}
+	
+	module.exports = Packer;
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	// Returns a function, that, as long as it continues to be invoked, will not
+	// be triggered. The function will be called after it stops being called for
+	// N milliseconds. If `immediate` is passed, trigger the function on the
+	// leading edge, instead of the trailing.
+	function debounce(func, wait, immediate) {
+	    var timeout;
+	    return function () {
+	        var context = this,
+	            args = arguments;
+	        var later = function later() {
+	            timeout = null;
+	            if (!immediate) func.apply(context, args);
+	        };
+	        var callNow = immediate && !timeout;
+	        clearTimeout(timeout);
+	        timeout = setTimeout(later, wait);
+	        if (callNow) func.apply(context, args);
+	    };
+	};
+	
+	module.exports = debounce;
 
 /***/ }
 /******/ ]);

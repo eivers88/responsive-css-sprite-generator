@@ -1,7 +1,8 @@
 require('../css/normalize.css');
 require('../css/main.scss');
-var Packer = require('./packer');
 var Clipboard = require('clipboard');
+var Packer = require('./packer');
+var debounce = require('./debounce');
 
 /*
  * Files Selector
@@ -62,9 +63,9 @@ fileList.addEventListener('click', function(e){
     }
 });
 
-prefixElem.addEventListener('keyup', updateValues);
-paddingElem.addEventListener('keyup', updateValues);
-pathElem.addEventListener('keyup', updateValues);
+prefixElem.addEventListener('keyup', debounce(updateValues, 250));
+paddingElem.addEventListener('keyup', debounce(updateValues, 250));
+pathElem.addEventListener('keyup', debounce(updateValues, 250));
 
 function updateValues(){
     prefix = prefixElem.value;
@@ -156,9 +157,7 @@ function handleFiles(files) {
 }
 
 function loadComplete(){
-    //console.log('load complete');
     var packer = new Packer(padding, prefix, path);
-    //var packer = new GrowingPacker();
     packer.sort(blocks);
     packer.fit(blocks);
     packer.draw(
@@ -181,14 +180,13 @@ function onload(id, file, queue){
             id:id
         });
         loaded++;
-        //console.log(loaded, queue);
         if(loaded === queue){
             loadComplete();
         }
     }
 }
 
-document.getElementById('download').addEventListener('click', function() {
+document.getElementById('download').addEventListener('click', function(){
     var a = document.createElement('a');
     a.href = canvas.toDataURL();
     a.download = 'sprite.png';
@@ -199,14 +197,3 @@ document.getElementById('download').addEventListener('click', function() {
 }, false);
 
 var clipboard = new Clipboard('#copy');
-
-//clipboard.on('success', function(e) {
-//    console.info('Action:', e.action);
-//    console.info('Text:', e.text);
-//    console.info('Trigger:', e.trigger);
-//});
-//
-//clipboard.on('error', function(e) {
-//    console.error('Action:', e.action);
-//    console.error('Trigger:', e.trigger);
-//});
