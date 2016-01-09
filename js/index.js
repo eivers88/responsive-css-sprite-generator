@@ -1,5 +1,3 @@
-require('../css/normalize.css');
-require('../css/main.scss');
 var Clipboard = require('clipboard');
 var Packer = require('./packer');
 var debounce = require('./debounce');
