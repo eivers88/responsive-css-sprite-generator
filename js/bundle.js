@@ -336,7 +336,7 @@ Packer.prototype = {
 
     draw: function draw(blocks, canvas, output) {
         var ctx = canvas.getContext('2d');
-        var gitubUrl = '/*\nResponsive CSS Sprite created using: ' + 'http://eivers88.github.io/responsive-css-sprite-generator/\n' + '*/\n\n';
+        var gitubUrl = '/*\nResponsive CSS Sprite created using: ' + 'http://responsive-css.us/\n' + '*/\n\n';
         var groupSelectors = '';
         var globalStyle = '\n{display:inline-block; overflow:hidden; background-repeat: ' + 'no-repeat;background-image:url(' + this.path + ');}\n\n';
         var spriteStyle = '';
