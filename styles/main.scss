@@ -19,13 +19,15 @@ canvas {
   position: relative;
   height: 100%;
 }
-
+.header-bg {
+  display: none;
+}
 header {
   height: 100px;
   width: 100%;
   background-color: #424242;
   position: fixed;
-  z-index: 2;
+  z-index: 3;
   padding: 8px 10px 0;
 
   h1 {
@@ -57,7 +59,10 @@ header {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #F5F5F5;
+  //background-color: #F5F5F5;
+  //background-color: #757575;
+  background: transparent url('../img/tile-dark.jpg') 0 0 repeat;
+  background-size: 20px;
   p {
     color: #ffffff;
   }
@@ -69,8 +74,10 @@ header {
       position: relative;
       padding: 5px;
       margin: 0 0 5px;
-      background-color: #fff;
+      //background-color: #fff;
+      //background-color: #BDBDBD;
       min-height: 29px;
+      border: solid 1px transparent;
       img {
         max-width: 100%;
         height: auto;
@@ -89,6 +96,7 @@ header {
         transition: opacity 300ms ease;
       }
       &:hover {
+        border: dashed 1px #FFFFFF;
         span {
           opacity: 1;
         }
@@ -108,6 +116,7 @@ header {
     /*background: transparent url('../img/ic_remove_circle_outline_black_24px.svg') 0 0 no-repeat;*/
     cursor: pointer;
     opacity: 0.5;
+    filter: invert(1);
     &:hover {
       transform: scale(1.1);
     }
@@ -226,7 +235,30 @@ textarea {
     transform: scale(0.9);
   }
 }
-
+.github {
+  position: relative;
+  left: 10px;
+  top: 5px;
+  display: inline-block;
+  background: transparent url('../img/GitHub-Mark-Light-32px.png') 0 0 no-repeat;
+  width: 32px;
+  height: 32px;
+}
 .dimensions {
   font-size: 0.8em;
+}
+
+@media (max-width: 800px) {
+  .header-bg {
+    height: 100px;
+    width: 100%;
+    background-color: #424242;
+    position: fixed;
+    z-index: 2;
+    display: block;
+  }
+  header {
+    position: absolute;
+    width: 800px;
+  }
 }
