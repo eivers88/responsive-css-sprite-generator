@@ -15,12 +15,10 @@ canvas {
   position: relative;
   height: 100%; }
 
-.header-bg {
-  display: none; }
-
 header {
   height: 100px;
   width: 100%;
+  min-width: 800px;
   background-color: #424242;
   position: fixed;
   z-index: 3;
@@ -50,7 +48,8 @@ header {
   top: 0;
   left: 0;
   background: transparent url("../img/tile-dark.jpg") 0 0 repeat;
-  background-size: 20px; }
+  background-size: 20px;
+  border-right: solid 8px #424242; }
   .file-list p {
     color: #ffffff; }
   .file-list ul {
@@ -210,15 +209,3 @@ textarea {
 
 .dimensions {
   font-size: 0.8em; }
-
-@media (max-width: 800px) {
-  .header-bg {
-    height: 100px;
-    width: 100%;
-    background-color: #424242;
-    position: fixed;
-    z-index: 2;
-    display: block; }
-  header {
-    position: absolute;
-    width: 800px; } }
