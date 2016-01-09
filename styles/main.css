@@ -15,12 +15,15 @@ canvas {
   position: relative;
   height: 100%; }
 
+.header-bg {
+  display: none; }
+
 header {
   height: 100px;
   width: 100%;
   background-color: #424242;
   position: fixed;
-  z-index: 2;
+  z-index: 3;
   padding: 8px 10px 0; }
   header h1 {
     font-size: 2em;
@@ -46,7 +49,8 @@ header {
   position: absolute;
   top: 0;
   left: 0;
-  background-color: #F5F5F5; }
+  background: transparent url("../img/tile-dark.jpg") 0 0 repeat;
+  background-size: 20px; }
   .file-list p {
     color: #ffffff; }
   .file-list ul {
@@ -57,8 +61,8 @@ header {
       position: relative;
       padding: 5px;
       margin: 0 0 5px;
-      background-color: #fff;
-      min-height: 29px; }
+      min-height: 29px;
+      border: solid 1px transparent; }
       .file-list ul li img {
         max-width: 100%;
         height: auto;
@@ -74,10 +78,12 @@ header {
         border-radius: 5px;
         opacity: 0;
         transition: opacity 300ms ease; }
-      .file-list ul li:hover span {
-        opacity: 1; }
-      .file-list ul li:hover .remove {
-        opacity: 1; }
+      .file-list ul li:hover {
+        border: dashed 1px #FFFFFF; }
+        .file-list ul li:hover span {
+          opacity: 1; }
+        .file-list ul li:hover .remove {
+          opacity: 1; }
   .file-list .remove {
     position: absolute;
     top: 3px;
@@ -87,8 +93,11 @@ header {
     background: transparent url("../img/ic_clear_black_24px.svg") 0 0 no-repeat;
     /*background: transparent url('../img/ic_remove_circle_outline_black_24px.svg') 0 0 no-repeat;*/
     cursor: pointer;
-    opacity: 0.5; }
+    opacity: 0.5;
+    -webkit-filter: invert(1);
+    filter: invert(1); }
     .file-list .remove:hover {
+      -webkit-transform: scale(1.1);
       transform: scale(1.1); }
 
 .output {
@@ -164,6 +173,7 @@ textarea {
     left: 0;
     top: 46px; }
   .download:active {
+    -webkit-transform: scale(0.9);
     transform: scale(0.9); }
 
 .download-info {
@@ -186,7 +196,29 @@ textarea {
     left: 0;
     top: 54px; }
   .copy:active {
+    -webkit-transform: scale(0.9);
     transform: scale(0.9); }
+
+.github {
+  position: relative;
+  left: 10px;
+  top: 5px;
+  display: inline-block;
+  background: transparent url("../img/GitHub-Mark-Light-32px.png") 0 0 no-repeat;
+  width: 32px;
+  height: 32px; }
 
 .dimensions {
   font-size: 0.8em; }
+
+@media (max-width: 800px) {
+  .header-bg {
+    height: 100px;
+    width: 100%;
+    background-color: #424242;
+    position: fixed;
+    z-index: 2;
+    display: block; }
+  header {
+    position: absolute;
+    width: 800px; } }

@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 var source = require('vinyl-source-stream');
 var sass = require('gulp-sass');
+var autoprefixer = require('gulp-autoprefixer');
 var babelify = require('babelify');
 var watchify = require('watchify');
 var exorcist = require('exorcist');
@@ -48,6 +49,10 @@ gulp.task('bundle', function () {
 gulp.task('sass', function () {
     return gulp.src("styles/*.scss")
         .pipe(sass())
+        .pipe(autoprefixer({
+            browsers: ['last 2 versions'],
+            cascade: false
+        }))
         .pipe(gulp.dest("styles"))
         .pipe(browserSync.stream());
 });
