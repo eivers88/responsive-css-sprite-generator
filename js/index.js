@@ -41,6 +41,11 @@ fileList.addEventListener('click', function(e){
                     blocks.splice(i,1);
                     loaded--;
                     e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+                    ga('send', {
+                        hitType: 'event',
+                        eventCategory: 'Remove Image',
+                        eventAction: 'click'
+                    });
                     break;
                 }
             }
@@ -79,6 +84,11 @@ function updateValues(){
             css
         );
         dimensionsElem.innerHTML = '(' + canvas.width + 'px by ' + canvas.height + 'px)';
+        ga('send', {
+            hitType: 'event',
+            eventCategory: 'Update Values',
+            eventAction: 'keyup'
+        });
     }
 }
 
@@ -93,6 +103,11 @@ dropbox.addEventListener("click", function(e){
         fileElem.click();
     }
     e.preventDefault(); // prevent navigation to "#"
+    ga('send', {
+        hitType: 'event',
+        eventCategory: 'File Explorer',
+        eventAction: 'click'
+    });
 }, false);
 
 function dragenter(e) {
@@ -113,6 +128,13 @@ function drop(e) {
     var files = dt.files;
 
     handleFiles(files);
+
+    ga('send', {
+        hitType: 'event',
+        eventCategory: 'File Drop',
+        eventAction: 'drop'
+    });
+
 }
 
 /*
@@ -192,6 +214,21 @@ document.getElementById('download').addEventListener('click', function(){
     //console.log(a);
     a.click();
     document.body.removeChild(a);
+
+    ga('send', {
+        hitType: 'event',
+        eventCategory: 'Sprite Download',
+        eventAction: 'click'
+    });
+
 }, false);
 
 var clipboard = new Clipboard('#copy');
+
+document.getElementById('copy').addEventListener('click', function(){
+    ga('send', {
+        hitType: 'event',
+        eventCategory: 'Copy CSS',
+        eventAction: 'click'
+    });
+});
