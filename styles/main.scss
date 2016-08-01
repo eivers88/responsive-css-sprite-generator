@@ -22,7 +22,7 @@ canvas {
 header {
   height: 100px;
   width: 100%;
-  min-width: 800px;
+  min-width: 1024px;
   background-color: #424242;
   position: fixed;
   z-index: 3;
@@ -39,6 +39,9 @@ header {
     &:last-child {
       width: 30px;
       text-align: center;
+    }
+    &.path-input {
+      width: 400px;
     }
   }
   label {
