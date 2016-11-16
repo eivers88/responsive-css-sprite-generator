@@ -93,7 +93,7 @@ Packer.prototype = {
             '-ms-interpolation-mode: nearest-neighbor; ' +
             'image-rendering: -moz-crisp-edges; ' +
             'image-rendering: pixelated;' +
-            'background-repeat: no-repeat; ' +
+            'background-repeat: no-repeat;\n' +
             'background-image:url(' + this.path + ');}\n\n';
         var spriteStyle = '';
         var p = this.root.p; // padding
