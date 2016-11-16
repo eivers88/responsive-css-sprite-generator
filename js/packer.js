@@ -89,8 +89,12 @@ Packer.prototype = {
             'http://responsive-css.us/\n' +
             '*/\n\n';
         var groupSelectors = '';
-        var globalStyle = '\n{display:inline-block; overflow:hidden; background-repeat: ' +
-            'no-repeat;background-image:url(' + this.path + ');}\n\n';
+        var globalStyle = '\n{display:inline-block; overflow:hidden; ' +
+            '-ms-interpolation-mode: nearest-neighbor; ' +
+            'image-rendering: -moz-crisp-edges; ' +
+            'image-rendering: pixelated;' +
+            'background-repeat: no-repeat; ' +
+            'background-image:url(' + this.path + ');}\n\n';
         var spriteStyle = '';
         var p = this.root.p; // padding
         var width = this.root.w + p;
