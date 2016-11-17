@@ -95,7 +95,6 @@ header {
     /*background: transparent url('../img/ic_remove_circle_outline_black_24px.svg') 0 0 no-repeat;*/
     cursor: pointer;
     opacity: 0.5;
-    -webkit-filter: invert(1);
     filter: invert(1); }
     .file-list .remove:hover {
       transform: scale(1.1); }

@@ -90,9 +90,6 @@ Packer.prototype = {
             '*/\n\n';
         var groupSelectors = '';
         var globalStyle = '\n{display:inline-block; overflow:hidden; ' +
-            '-ms-interpolation-mode: nearest-neighbor; ' +
-            'image-rendering: -moz-crisp-edges; ' +
-            'image-rendering: pixelated;' +
             'background-repeat: no-repeat;\n' +
             'background-image:url(' + this.path + ');}\n\n';
         var spriteStyle = '';
