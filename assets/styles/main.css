@@ -97,6 +97,7 @@ header {
     opacity: 0.5;
     filter: invert(1); }
     .file-list .remove:hover {
+      -ms-transform: scale(1.1);
       transform: scale(1.1); }
 
 .output {
@@ -172,6 +173,7 @@ textarea {
     left: 0;
     top: 46px; }
   .download:active {
+    -ms-transform: scale(0.9);
     transform: scale(0.9); }
 
 .download-info {
@@ -194,6 +196,7 @@ textarea {
     left: 0;
     top: 54px; }
   .copy:active {
+    -ms-transform: scale(0.9);
     transform: scale(0.9); }
 
 .github {
@@ -207,3 +210,7 @@ textarea {
 
 .dimensions {
   font-size: 0.8em; }
+
+
+
+/*# sourceMappingURL=main.css.map */

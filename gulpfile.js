@@ -1,71 +1,45 @@
 var gulp = require('gulp');
-var gutil = require('gulp-util');
-var source = require('vinyl-source-stream');
-var sass = require('gulp-sass');
+var sass = require('gulp-ruby-sass');
 var autoprefixer = require('gulp-autoprefixer');
-var babelify = require('babelify');
-var watchify = require('watchify');
-var exorcist = require('exorcist');
-var browserify = require('browserify');
+var sourcemaps = require('gulp-sourcemaps');
 var browserSync = require('browser-sync').create();
 
-// Input file.
-watchify.args.debug = true;
-var bundler = watchify(browserify('./js/index.js', watchify.args));
+/**
+ * STYLESHEETS
+ * */
 
-// Babel transform
-bundler.transform(babelify.configure({
-    sourceMapRelative: 'js',
-    presets: ['es2015']
-}));
+gulp.task('clear:cache', function () {
+    sass.clearCache();
+});
 
-// On updates recompile
-bundler.on('update', bundle);
+gulp.task('clean:sass', ['clear:cache'], sassTask);
 
-function bundle() {
+gulp.task('sass', sassTask);
 
-    gutil.log('Compiling JS...');
-
-    return bundler.bundle()
-        .on('error', function (err) {
-            gutil.log(err.message);
-            browserSync.notify("Browserify Error!");
-            this.emit("end");
-        })
-        .pipe(exorcist('js/bundle.js.map'))
-        .pipe(source('bundle.js'))
-        .pipe(gulp.dest('./js'))
-        .pipe(browserSync.stream({once: true}));
+function sassTask(){
+    return sass('./assets/styles/**/*.scss', {sourcemap: true})
+        .on('error', sass.logError)
+        .pipe(autoprefixer({
+            browsers: ['last 3 versions'],
+            cascade: false
+        }))
+        .pipe(sourcemaps.write('.'))
+        .pipe(gulp.dest('./assets/styles'))
+        .pipe(browserSync.stream({match: '**/*.css'}));
 }
 
 /**
- * Gulp task alias
- */
-gulp.task('bundle', function () {
-    return bundle();
-});
+ * WATCH
+ * */
 
-// Compile sass into CSS & auto-inject into browsers
-gulp.task('sass', function () {
-    return gulp.src("styles/*.scss")
-        .pipe(sass())
-        .pipe(autoprefixer({
-            browsers: ['last 2 versions'],
-            cascade: false
-        }))
-        .pipe(gulp.dest("styles"))
-        .pipe(browserSync.stream());
-});
-
-/**
- * First bundle, then serve from the ./app directory
- */
-gulp.task('default', ['bundle', 'sass'], function () {
+gulp.task('watch', ['clean:sass'], function() {
 
     browserSync.init({
         server: "./"
     });
 
-    gulp.watch("styles/*.scss", ['sass']);
-    gulp.watch("./*.html").on('change', browserSync.reload);
+    gulp.watch('./assets/js/bundle.js').on('change', browserSync.reload);
+    gulp.watch('./*.html').on('change', browserSync.reload);
+    gulp.watch('./assets/styles/**/*.scss', ['sass']);
+
 });

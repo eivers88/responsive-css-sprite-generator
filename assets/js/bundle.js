@@ -1,5 +1,77 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
+
 
 // Returns a function, that, as long as it continues to be invoked, will not
 // be triggered. The function will be called after it stops being called for
@@ -23,12 +95,351 @@ function debounce(func, wait, immediate) {
 
 module.exports = debounce;
 
-},{}],2:[function(require,module,exports){
-'use strict';
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
 
-var Clipboard = require('clipboard');
-var Packer = require('./packer');
-var debounce = require('./debounce');
+"use strict";
+
+
+function Packer(pad, pre, path) {
+    this.init(pad, pre, path);
+}
+
+Packer.prototype = {
+
+    init: function init(pad, pre, path) {
+        var padding = isNumeric(pad) ? pad : 2;
+        padding = Math.round(Math.abs(padding));
+        this.root = {
+            x: 0, // origin x
+            y: 0, // origin y
+            w: 256 - padding, // width
+            h: 256 - padding, // height
+            p: padding
+        };
+        this.prefix = pre;
+        //this.prefix = this.prefix.replace(/ /g, '');
+        this.path = path;
+    },
+
+    sort: function sort(blocks) {
+        blocks.sort(function (a, b) {
+            // should this be sorted by height?
+            if (a.h < b.h) {
+                return 1;
+            }
+            if (a.h > b.h) {
+                return -1;
+            }
+            return 0;
+        });
+    },
+
+    fit: function fit(blocks) {
+        var n,
+            node,
+            block,
+            p = this.root.p;
+        for (n = 0; n < blocks.length; n++) {
+            block = blocks[n];
+            block.fit = false; // reset
+            if (node = this.findNode(this.root, block.w + p, block.h + p)) {
+                block.fit = this.splitNode(node, block.w + p, block.h + p);
+            }
+            if (!block.fit) {
+                this.resize(blocks);
+                break;
+            }
+        }
+    },
+
+    resize: function resize(blocks) {
+        var w,
+            h,
+            p = this.root.p;
+        if (this.root.w > this.root.h) {
+            w = this.root.w + p;
+            h = (this.root.h + p) * 2;
+        } else {
+            w = (this.root.w + p) * 2;
+            h = this.root.h + p;
+        }
+        this.root = {
+            x: 0, // origin x
+            y: 0, // origin y
+            w: w - p, // width
+            h: h - p, // height
+            p: p
+        };
+        this.fit(blocks);
+    },
+
+    findNode: function findNode(root, w, h) {
+        if (root.used) return this.findNode(root.right, w, h) || this.findNode(root.down, w, h);else if (w <= root.w && h <= root.h) return root;else return null;
+    },
+
+    splitNode: function splitNode(node, w, h) {
+        node.used = true;
+        node.down = { x: node.x, y: node.y + h, w: node.w, h: node.h - h };
+        node.right = { x: node.x + w, y: node.y, w: node.w - w, h: h };
+        return node;
+    },
+
+    draw: function draw(blocks, canvas, output) {
+        var ctx = canvas.getContext('2d');
+        var gitubUrl = '/*\nResponsive CSS Sprite created using: ' + 'http://responsive-css.us/\n' + '*/\n\n';
+        var groupSelectors = '';
+        var globalStyle = '\n{display:inline-block; overflow:hidden; ' + 'background-repeat: no-repeat;\n' + 'background-image:url(' + this.path + ');}\n\n';
+        var spriteStyle = '';
+        var p = this.root.p; // padding
+        var width = this.root.w + p;
+        var height = this.root.h + p;
+        var b; // block
+        canvas.width = width;
+        canvas.height = height;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (var n = 0; n < blocks.length; n++) {
+            b = blocks[n];
+            if (b.fit) {
+                // turn on for testing
+                //ctx.fillRect(b.fit.x + p, b.fit.y + p, b.w, b.h);
+                //ctx.stroke();
+                ctx.drawImage(b.img, b.fit.x + p, b.fit.y + p);
+                // add comma if not the last style
+                groupSelectors += '.' + this.prefix + b.name + (n === blocks.length - 1 ? ' ' : ', ');
+                // individual sprite style
+                spriteStyle += '.' + this.prefix + b.name + ' {width:' + b.w + 'px; ' + 'height:' + b.h + 'px; ' + 'background-position:' + ((b.fit.x + p) / (width - b.w) * 100).toPrecision(6) + '% ' + ((b.fit.y + p) / (height - b.h) * 100).toPrecision(6) + '%; ' + 'background-size:' + (width / b.w * 100).toPrecision(6) + '%; ' + '}\n';
+            }
+        }
+        output.value = gitubUrl + groupSelectors + globalStyle + spriteStyle;
+    }
+
+};
+
+function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+module.exports = Packer;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module, __webpack_require__(4), __webpack_require__(10), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if (typeof exports !== "undefined") {
+        factory(module, require('./clipboard-action'), require('tiny-emitter'), require('good-listener'));
+    } else {
+        var mod = {
+            exports: {}
+        };
+        factory(mod, global.clipboardAction, global.tinyEmitter, global.goodListener);
+        global.clipboard = mod.exports;
+    }
+})(this, function (module, _clipboardAction, _tinyEmitter, _goodListener) {
+    'use strict';
+
+    var _clipboardAction2 = _interopRequireDefault(_clipboardAction);
+
+    var _tinyEmitter2 = _interopRequireDefault(_tinyEmitter);
+
+    var _goodListener2 = _interopRequireDefault(_goodListener);
+
+    function _interopRequireDefault(obj) {
+        return obj && obj.__esModule ? obj : {
+            default: obj
+        };
+    }
+
+    function _classCallCheck(instance, Constructor) {
+        if (!(instance instanceof Constructor)) {
+            throw new TypeError("Cannot call a class as a function");
+        }
+    }
+
+    var _createClass = function () {
+        function defineProperties(target, props) {
+            for (var i = 0; i < props.length; i++) {
+                var descriptor = props[i];
+                descriptor.enumerable = descriptor.enumerable || false;
+                descriptor.configurable = true;
+                if ("value" in descriptor) descriptor.writable = true;
+                Object.defineProperty(target, descriptor.key, descriptor);
+            }
+        }
+
+        return function (Constructor, protoProps, staticProps) {
+            if (protoProps) defineProperties(Constructor.prototype, protoProps);
+            if (staticProps) defineProperties(Constructor, staticProps);
+            return Constructor;
+        };
+    }();
+
+    function _possibleConstructorReturn(self, call) {
+        if (!self) {
+            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+        }
+
+        return call && (typeof call === "object" || typeof call === "function") ? call : self;
+    }
+
+    function _inherits(subClass, superClass) {
+        if (typeof superClass !== "function" && superClass !== null) {
+            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+        }
+
+        subClass.prototype = Object.create(superClass && superClass.prototype, {
+            constructor: {
+                value: subClass,
+                enumerable: false,
+                writable: true,
+                configurable: true
+            }
+        });
+        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+    }
+
+    var Clipboard = function (_Emitter) {
+        _inherits(Clipboard, _Emitter);
+
+        /**
+         * @param {String|HTMLElement|HTMLCollection|NodeList} trigger
+         * @param {Object} options
+         */
+        function Clipboard(trigger, options) {
+            _classCallCheck(this, Clipboard);
+
+            var _this = _possibleConstructorReturn(this, (Clipboard.__proto__ || Object.getPrototypeOf(Clipboard)).call(this));
+
+            _this.resolveOptions(options);
+            _this.listenClick(trigger);
+            return _this;
+        }
+
+        /**
+         * Defines if attributes would be resolved using internal setter functions
+         * or custom functions that were passed in the constructor.
+         * @param {Object} options
+         */
+
+
+        _createClass(Clipboard, [{
+            key: 'resolveOptions',
+            value: function resolveOptions() {
+                var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+                this.action = typeof options.action === 'function' ? options.action : this.defaultAction;
+                this.target = typeof options.target === 'function' ? options.target : this.defaultTarget;
+                this.text = typeof options.text === 'function' ? options.text : this.defaultText;
+            }
+        }, {
+            key: 'listenClick',
+            value: function listenClick(trigger) {
+                var _this2 = this;
+
+                this.listener = (0, _goodListener2.default)(trigger, 'click', function (e) {
+                    return _this2.onClick(e);
+                });
+            }
+        }, {
+            key: 'onClick',
+            value: function onClick(e) {
+                var trigger = e.delegateTarget || e.currentTarget;
+
+                if (this.clipboardAction) {
+                    this.clipboardAction = null;
+                }
+
+                this.clipboardAction = new _clipboardAction2.default({
+                    action: this.action(trigger),
+                    target: this.target(trigger),
+                    text: this.text(trigger),
+                    trigger: trigger,
+                    emitter: this
+                });
+            }
+        }, {
+            key: 'defaultAction',
+            value: function defaultAction(trigger) {
+                return getAttributeValue('action', trigger);
+            }
+        }, {
+            key: 'defaultTarget',
+            value: function defaultTarget(trigger) {
+                var selector = getAttributeValue('target', trigger);
+
+                if (selector) {
+                    return document.querySelector(selector);
+                }
+            }
+        }, {
+            key: 'defaultText',
+            value: function defaultText(trigger) {
+                return getAttributeValue('text', trigger);
+            }
+        }, {
+            key: 'destroy',
+            value: function destroy() {
+                this.listener.destroy();
+
+                if (this.clipboardAction) {
+                    this.clipboardAction.destroy();
+                    this.clipboardAction = null;
+                }
+            }
+        }], [{
+            key: 'isSupported',
+            value: function isSupported() {
+                var action = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : ['copy', 'cut'];
+
+                var actions = typeof action === 'string' ? [action] : action;
+                var support = !!document.queryCommandSupported;
+
+                actions.forEach(function (action) {
+                    support = support && !!document.queryCommandSupported(action);
+                });
+
+                return support;
+            }
+        }]);
+
+        return Clipboard;
+    }(_tinyEmitter2.default);
+
+    /**
+     * Helper function to retrieve attribute value.
+     * @param {String} suffix
+     * @param {Element} element
+     */
+    function getAttributeValue(suffix, element) {
+        var attribute = 'data-clipboard-' + suffix;
+
+        if (!element.hasAttribute(attribute)) {
+            return;
+        }
+
+        return element.getAttribute(attribute);
+    }
+
+    module.exports = Clipboard;
+});
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Clipboard = __webpack_require__(2);
+var Packer = __webpack_require__(1);
+var debounce = __webpack_require__(0);
 
 /*
  * Files Selector
@@ -247,134 +658,16 @@ document.getElementById('copy').addEventListener('click', function () {
     });
 });
 
-},{"./debounce":1,"./packer":3,"clipboard":5}],3:[function(require,module,exports){
-'use strict';
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
 
-function Packer(pad, pre, path) {
-    this.init(pad, pre, path);
-}
-
-Packer.prototype = {
-
-    init: function init(pad, pre, path) {
-        var padding = isNumeric(pad) ? pad : 2;
-        padding = Math.round(Math.abs(padding));
-        this.root = {
-            x: 0, // origin x
-            y: 0, // origin y
-            w: 256 - padding, // width
-            h: 256 - padding, // height
-            p: padding
-        };
-        this.prefix = pre;
-        //this.prefix = this.prefix.replace(/ /g, '');
-        this.path = path;
-    },
-
-    sort: function sort(blocks) {
-        blocks.sort(function (a, b) {
-            // should this be sorted by height?
-            if (a.h < b.h) {
-                return 1;
-            }
-            if (a.h > b.h) {
-                return -1;
-            }
-            return 0;
-        });
-    },
-
-    fit: function fit(blocks) {
-        var n,
-            node,
-            block,
-            p = this.root.p;
-        for (n = 0; n < blocks.length; n++) {
-            block = blocks[n];
-            block.fit = false; // reset
-            if (node = this.findNode(this.root, block.w + p, block.h + p)) {
-                block.fit = this.splitNode(node, block.w + p, block.h + p);
-            }
-            if (!block.fit) {
-                this.resize(blocks);
-                break;
-            }
-        }
-    },
-
-    resize: function resize(blocks) {
-        var w,
-            h,
-            p = this.root.p;
-        if (this.root.w > this.root.h) {
-            w = this.root.w + p;
-            h = (this.root.h + p) * 2;
-        } else {
-            w = (this.root.w + p) * 2;
-            h = this.root.h + p;
-        }
-        this.root = {
-            x: 0, // origin x
-            y: 0, // origin y
-            w: w - p, // width
-            h: h - p, // height
-            p: p
-        };
-        this.fit(blocks);
-    },
-
-    findNode: function findNode(root, w, h) {
-        if (root.used) return this.findNode(root.right, w, h) || this.findNode(root.down, w, h);else if (w <= root.w && h <= root.h) return root;else return null;
-    },
-
-    splitNode: function splitNode(node, w, h) {
-        node.used = true;
-        node.down = { x: node.x, y: node.y + h, w: node.w, h: node.h - h };
-        node.right = { x: node.x + w, y: node.y, w: node.w - w, h: h };
-        return node;
-    },
-
-    draw: function draw(blocks, canvas, output) {
-        var ctx = canvas.getContext('2d');
-        var gitubUrl = '/*\nResponsive CSS Sprite created using: ' + 'http://responsive-css.us/\n' + '*/\n\n';
-        var groupSelectors = '';
-        var globalStyle = '\n{display:inline-block; overflow:hidden; ' + 'background-repeat: no-repeat;\n' + 'background-image:url(' + this.path + ');}\n\n';
-        var spriteStyle = '';
-        var p = this.root.p; // padding
-        var width = this.root.w + p;
-        var height = this.root.h + p;
-        var b; // block
-        canvas.width = width;
-        canvas.height = height;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (var n = 0; n < blocks.length; n++) {
-            b = blocks[n];
-            if (b.fit) {
-                // turn on for testing
-                //ctx.fillRect(b.fit.x + p, b.fit.y + p, b.w, b.h);
-                //ctx.stroke();
-                ctx.drawImage(b.img, b.fit.x + p, b.fit.y + p);
-                // add comma if not the last style
-                groupSelectors += '.' + this.prefix + b.name + (n === blocks.length - 1 ? ' ' : ', ');
-                // individual sprite style
-                spriteStyle += '.' + this.prefix + b.name + ' {width:' + b.w + 'px; ' + 'height:' + b.h + 'px; ' + 'background-position:' + ((b.fit.x + p) / (width - b.w) * 100).toPrecision(6) + '% ' + ((b.fit.y + p) / (height - b.h) * 100).toPrecision(6) + '%; ' + 'background-size:' + (width / b.w * 100).toPrecision(6) + '%; ' + '}\n';
-            }
-        }
-        output.value = gitubUrl + groupSelectors + globalStyle + spriteStyle;
-    }
-
-};
-
-function isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
-}
-
-module.exports = Packer;
-
-},{}],4:[function(require,module,exports){
-(function (global, factory) {
-    if (typeof define === "function" && define.amd) {
-        define(['module', 'select'], factory);
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [module, __webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
     } else if (typeof exports !== "undefined") {
         factory(module, require('select'));
     } else {
@@ -490,7 +783,6 @@ module.exports = Packer;
                 this.fakeElem.style[isRTL ? 'right' : 'left'] = '-9999px';
                 // Move element to the same position vertically
                 var yPosition = window.pageYOffset || document.documentElement.scrollTop;
-                this.fakeElem.addEventListener('focus', window.scrollTo(0, yPosition));
                 this.fakeElem.style.top = yPosition + 'px';
 
                 this.fakeElem.setAttribute('readonly', '');
@@ -601,197 +893,17 @@ module.exports = Packer;
 
     module.exports = ClipboardAction;
 });
-},{"select":10}],5:[function(require,module,exports){
-(function (global, factory) {
-    if (typeof define === "function" && define.amd) {
-        define(['module', './clipboard-action', 'tiny-emitter', 'good-listener'], factory);
-    } else if (typeof exports !== "undefined") {
-        factory(module, require('./clipboard-action'), require('tiny-emitter'), require('good-listener'));
-    } else {
-        var mod = {
-            exports: {}
-        };
-        factory(mod, global.clipboardAction, global.tinyEmitter, global.goodListener);
-        global.clipboard = mod.exports;
-    }
-})(this, function (module, _clipboardAction, _tinyEmitter, _goodListener) {
-    'use strict';
 
-    var _clipboardAction2 = _interopRequireDefault(_clipboardAction);
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
 
-    var _tinyEmitter2 = _interopRequireDefault(_tinyEmitter);
+var DOCUMENT_NODE_TYPE = 9;
 
-    var _goodListener2 = _interopRequireDefault(_goodListener);
-
-    function _interopRequireDefault(obj) {
-        return obj && obj.__esModule ? obj : {
-            default: obj
-        };
-    }
-
-    function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError("Cannot call a class as a function");
-        }
-    }
-
-    var _createClass = function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];
-                descriptor.enumerable = descriptor.enumerable || false;
-                descriptor.configurable = true;
-                if ("value" in descriptor) descriptor.writable = true;
-                Object.defineProperty(target, descriptor.key, descriptor);
-            }
-        }
-
-        return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);
-            if (staticProps) defineProperties(Constructor, staticProps);
-            return Constructor;
-        };
-    }();
-
-    function _possibleConstructorReturn(self, call) {
-        if (!self) {
-            throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-        }
-
-        return call && (typeof call === "object" || typeof call === "function") ? call : self;
-    }
-
-    function _inherits(subClass, superClass) {
-        if (typeof superClass !== "function" && superClass !== null) {
-            throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-        }
-
-        subClass.prototype = Object.create(superClass && superClass.prototype, {
-            constructor: {
-                value: subClass,
-                enumerable: false,
-                writable: true,
-                configurable: true
-            }
-        });
-        if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
-    }
-
-    var Clipboard = function (_Emitter) {
-        _inherits(Clipboard, _Emitter);
-
-        /**
-         * @param {String|HTMLElement|HTMLCollection|NodeList} trigger
-         * @param {Object} options
-         */
-        function Clipboard(trigger, options) {
-            _classCallCheck(this, Clipboard);
-
-            var _this = _possibleConstructorReturn(this, (Clipboard.__proto__ || Object.getPrototypeOf(Clipboard)).call(this));
-
-            _this.resolveOptions(options);
-            _this.listenClick(trigger);
-            return _this;
-        }
-
-        /**
-         * Defines if attributes would be resolved using internal setter functions
-         * or custom functions that were passed in the constructor.
-         * @param {Object} options
-         */
-
-
-        _createClass(Clipboard, [{
-            key: 'resolveOptions',
-            value: function resolveOptions() {
-                var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-                this.action = typeof options.action === 'function' ? options.action : this.defaultAction;
-                this.target = typeof options.target === 'function' ? options.target : this.defaultTarget;
-                this.text = typeof options.text === 'function' ? options.text : this.defaultText;
-            }
-        }, {
-            key: 'listenClick',
-            value: function listenClick(trigger) {
-                var _this2 = this;
-
-                this.listener = (0, _goodListener2.default)(trigger, 'click', function (e) {
-                    return _this2.onClick(e);
-                });
-            }
-        }, {
-            key: 'onClick',
-            value: function onClick(e) {
-                var trigger = e.delegateTarget || e.currentTarget;
-
-                if (this.clipboardAction) {
-                    this.clipboardAction = null;
-                }
-
-                this.clipboardAction = new _clipboardAction2.default({
-                    action: this.action(trigger),
-                    target: this.target(trigger),
-                    text: this.text(trigger),
-                    trigger: trigger,
-                    emitter: this
-                });
-            }
-        }, {
-            key: 'defaultAction',
-            value: function defaultAction(trigger) {
-                return getAttributeValue('action', trigger);
-            }
-        }, {
-            key: 'defaultTarget',
-            value: function defaultTarget(trigger) {
-                var selector = getAttributeValue('target', trigger);
-
-                if (selector) {
-                    return document.querySelector(selector);
-                }
-            }
-        }, {
-            key: 'defaultText',
-            value: function defaultText(trigger) {
-                return getAttributeValue('text', trigger);
-            }
-        }, {
-            key: 'destroy',
-            value: function destroy() {
-                this.listener.destroy();
-
-                if (this.clipboardAction) {
-                    this.clipboardAction.destroy();
-                    this.clipboardAction = null;
-                }
-            }
-        }]);
-
-        return Clipboard;
-    }(_tinyEmitter2.default);
-
-    /**
-     * Helper function to retrieve attribute value.
-     * @param {String} suffix
-     * @param {Element} element
-     */
-    function getAttributeValue(suffix, element) {
-        var attribute = 'data-clipboard-' + suffix;
-
-        if (!element.hasAttribute(attribute)) {
-            return;
-        }
-
-        return element.getAttribute(attribute);
-    }
-
-    module.exports = Clipboard;
-});
-},{"./clipboard-action":4,"good-listener":9,"tiny-emitter":11}],6:[function(require,module,exports){
 /**
  * A polyfill for Element.matches()
  */
-if (Element && !Element.prototype.matches) {
+if (typeof Element !== 'undefined' && !Element.prototype.matches) {
     var proto = Element.prototype;
 
     proto.matches = proto.matchesSelector ||
@@ -809,7 +921,7 @@ if (Element && !Element.prototype.matches) {
  * @return {Function}
  */
 function closest (element, selector) {
-    while (element && element !== document) {
+    while (element && element.nodeType !== DOCUMENT_NODE_TYPE) {
         if (element.matches(selector)) return element;
         element = element.parentNode;
     }
@@ -817,8 +929,12 @@ function closest (element, selector) {
 
 module.exports = closest;
 
-},{}],7:[function(require,module,exports){
-var closest = require('./closest');
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var closest = __webpack_require__(5);
 
 /**
  * Delegates event to a selector.
@@ -863,7 +979,11 @@ function listener(element, selector, type, callback) {
 
 module.exports = delegate;
 
-},{"./closest":6}],8:[function(require,module,exports){
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
 /**
  * Check if argument is a HTML element.
  *
@@ -914,9 +1034,13 @@ exports.fn = function(value) {
     return type === '[object Function]';
 };
 
-},{}],9:[function(require,module,exports){
-var is = require('./is');
-var delegate = require('delegate');
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var is = __webpack_require__(7);
+var delegate = __webpack_require__(6);
 
 /**
  * Validates all params and calls the right
@@ -1011,7 +1135,11 @@ function listenSelector(selector, type, callback) {
 
 module.exports = listen;
 
-},{"./is":8,"delegate":7}],10:[function(require,module,exports){
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
 function select(element) {
     var selectedText;
 
@@ -1021,8 +1149,18 @@ function select(element) {
         selectedText = element.value;
     }
     else if (element.nodeName === 'INPUT' || element.nodeName === 'TEXTAREA') {
-        element.focus();
+        var isReadOnly = element.hasAttribute('readonly');
+
+        if (!isReadOnly) {
+            element.setAttribute('readonly', '');
+        }
+
+        element.select();
         element.setSelectionRange(0, element.value.length);
+
+        if (!isReadOnly) {
+            element.removeAttribute('readonly');
+        }
 
         selectedText = element.value;
     }
@@ -1046,7 +1184,11 @@ function select(element) {
 
 module.exports = select;
 
-},{}],11:[function(require,module,exports){
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
 function E () {
   // Keep this empty so it's easier to inherit from
   // (via https://github.com/lipsmack from https://github.com/scottcorgan/tiny-emitter/issues/3)
@@ -1114,5 +1256,7 @@ E.prototype = {
 
 module.exports = E;
 
-},{}]},{},[2])
+
+/***/ })
+/******/ ]);
 //# sourceMappingURL=bundle.js.map
