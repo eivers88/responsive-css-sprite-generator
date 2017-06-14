@@ -105,7 +105,6 @@ header {
         font-size: 0.8em;
         border-radius: 5px;
         opacity: 0;
-        transition: opacity 300ms ease;
       }
       &:hover {
         border: dashed 1px #FFFFFF;
@@ -170,7 +169,7 @@ header {
 }
 
 .dropbox {
-  /*border: solid 1px #000;*/
+  border: solid 1px #E0E0E0;
   background: transparent url('../img/tile-light.jpg') 0 0 repeat;
   background-size: 20px;
   margin: 0 auto;
@@ -206,6 +205,8 @@ textarea {
   font-family: 'Roboto Condensed', sans-serif;
   padding: 10px 8px;
   background-color: #F5F5F5;
+  box-shadow: none;
+  border: solid 1px #E0E0E0;
 }
 .button {
   width: 65px;
