@@ -8,24 +8,27 @@
     <meta name="keywords" content="Responsive,CSS,Sprite,Generator,Generated,Tool">
     <meta name="author" content="Aaron Eivers">
     <script src="assets/js/vendor/modernizr.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700" rel="stylesheet">
     <link rel="stylesheet" href="assets/styles/normalize.css">
     <link rel="stylesheet" href="assets/styles/main.css">
+    <link rel="icon" href="./favicon.ico?v=2" />
 </head>
 
 <body>
     <header>
         <h1>Responsive CSS Sprite Generator<a class="github" href="https://github.com/eivers88/responsive-css-sprite-generator" target="_blank"></a></h1>
-        <div id="download" class="download">
-            <span>Download Sprite</span>
+        <h2>A tool for generating CSS sprite sheets using percentage based background positions</h2>
+        <div id="download" class="download button">
+            <span>Download</span>
         </div>
-        <div id="copy" class="copy" data-clipboard-target="#css">
+        <div id="copy" class="copy button" data-clipboard-target="#css">
             <span>Copy CSS</span>
         </div>
-        <label for="prefix">Class Prefix</label>
+        <label for="prefix">Class Prefix:&nbsp;</label>
         <input id="prefix" type="text" name="prefix" placeholder="class prefix" value="">
-        <label for="path">Path</label>
+        <label for="path">&nbsp;Path:&nbsp;</label>
         <input id="path" class="path-input" type="text" name="path" placeholder="path" value="sprite.png">
-        <label for="padding">Padding (px)</label>
+        <label for="padding">&nbsp;Padding (px):&nbsp;</label>
         <input id="padding" type="text" name="padding" placeholder="padding" maxlength="2" value="2">
     </header>
     
