@@ -199,12 +199,20 @@ Packer.prototype = {
         canvas.width = width;
         canvas.height = height;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // sort blocks alphabetically
+        blocks.sort(function (a, b) {
+            var nameA = a.name.toUpperCase();
+            var nameB = b.name.toUpperCase();
+            return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+        });
+
         for (var n = 0; n < blocks.length; n++) {
             b = blocks[n];
             if (b.fit) {
                 // turn on for testing
-                //ctx.fillRect(b.fit.x + p, b.fit.y + p, b.w, b.h);
-                //ctx.stroke();
+                // ctx.fillRect(b.fit.x + p, b.fit.y + p, b.w, b.h);
+                // ctx.stroke();
                 ctx.drawImage(b.img, b.fit.x + p, b.fit.y + p);
                 // add comma if not the last style
                 groupSelectors += '.' + this.prefix + b.name + (n === blocks.length - 1 ? ' ' : ', ');
