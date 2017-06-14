@@ -1,6 +1,7 @@
 html {
   box-sizing: border-box;
-  font-family: 'Source Sans Pro', sans-serif; }
+  font-family: 'Roboto Condensed', sans-serif;
+  color: #24292e; }
 
 *, *:before, *:after {
   box-sizing: inherit; }
@@ -20,7 +21,7 @@ header {
   height: 120px;
   width: 100%;
   min-width: 1024px;
-  background-color: #424242;
+  background-color: #24292e;
   position: fixed;
   z-index: 3;
   padding: 8px 10px 0; }
@@ -31,20 +32,24 @@ header {
     font-weight: normal; }
   header h2 {
     font-size: 0.85em;
-    color: #FFFFFF;
+    color: rgba(255, 255, 255, 0.75);
     font-weight: normal;
     margin: 0 0 15px; }
   header input {
     font-size: 1em;
-    padding: 2px;
-    font-family: 'Source Sans Pro', sans-serif; }
+    padding: 6px;
+    font-family: 'Roboto Condensed', sans-serif;
+    background-color: rgba(255, 255, 255, 0.125);
+    color: #fff;
+    border: none;
+    border-radius: 2px; }
     header input:last-child {
       width: 30px;
       text-align: center; }
     header input.path-input {
       width: 400px; }
   header label {
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.75);
     font-size: 1em; }
 
 .content {
@@ -59,9 +64,9 @@ header {
   left: 0;
   background: transparent url("../img/tile-dark.jpg") 0 0 repeat;
   background-size: 20px;
-  border-right: solid 8px #424242; }
+  border-right: solid 8px #24292e; }
   .file-list p {
-    color: #ffffff; }
+    color: #fafbfc; }
   .file-list ul {
     list-style: none;
     margin: 0;
@@ -109,7 +114,7 @@ header {
       transform: scale(1.1); }
 
 .output {
-  padding: 10px 10px 0 210px; }
+  padding: 10px 10px 10px 210px; }
   .output b {
     font-size: 1.1em; }
 
@@ -165,13 +170,14 @@ header {
 
 textarea {
   width: 1024px;
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Roboto Condensed', sans-serif;
   padding: 10px 8px;
   background-color: #F5F5F5; }
 
 .button {
   width: 65px;
   height: 65px;
+  border-radius: 5px;
   cursor: pointer;
   transition: background-color 300ms ease; }
   .button:hover {
@@ -183,7 +189,7 @@ textarea {
     bottom: 100%;
     width: 100%;
     font-size: 0.8em;
-    color: #ffffff;
+    color: rgba(255, 255, 255, 0.75);
     text-align: center;
     padding-bottom: 5px; }
 
@@ -191,7 +197,7 @@ textarea {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: #212121 url("../img/ic_file_download_white_48px.svg") center center no-repeat; }
+  background: rgba(255, 255, 255, 0.125) url("../img/ic_file_download_white_48px.svg") center center no-repeat; }
 
 .download-info {
   font-size: 0.9em;
@@ -201,7 +207,7 @@ textarea {
   position: absolute;
   bottom: 10px;
   right: 85px;
-  background: #212121 url("../img/ic_content_copy_white_48px.svg") center center no-repeat; }
+  background: rgba(255, 255, 255, 0.125) url("../img/ic_content_copy_white_48px.svg") center center no-repeat; }
 
 .github {
   position: relative;
