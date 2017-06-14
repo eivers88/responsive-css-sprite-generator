@@ -29,6 +29,10 @@ function sassTask(){
         .pipe(browserSync.stream({match: '**/*.css'}));
 }
 
+/**
+ * LINT
+ * */
+
 gulp.task('lint', () => {
     // ESLint ignores files with "node_modules" paths.
     // So, it's best to have gulp ignore the directory as well.

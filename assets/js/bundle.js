@@ -63,44 +63,55 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 11:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
-var _debounce = __webpack_require__(12);
+var _dropbox = __webpack_require__(4);
+
+var _dropbox2 = _interopRequireDefault(_dropbox);
+
+var _debounce = __webpack_require__(1);
 
 var _debounce2 = _interopRequireDefault(_debounce);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// import dom from './dom';
 var app = {
 
-    start: function start() {
-        console.log('app started');
+  loadInProgress: false,
+  prefix: '',
+  padding: 0,
+  path: '',
 
-        window.addEventListener('resize', (0, _debounce2.default)(function () {
-            console.log('resize');
-        }, 250));
-    }
+  start: function start() {
+
+    console.log('app started');
+
+    _dropbox2.default.init();
+
+    window.addEventListener('resize', (0, _debounce2.default)(function () {
+      console.log('resize');
+    }, 250));
+  }
 
 };
 
 exports.default = app;
 
 /***/ }),
-
-/***/ 12:
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -132,14 +143,13 @@ function debounce(func, wait, immediate) {
 exports.default = debounce;
 
 /***/ }),
-
-/***/ 3:
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _app = __webpack_require__(11);
+var _app = __webpack_require__(0);
 
 var _app2 = _interopRequireDefault(_app);
 
@@ -147,7 +157,56 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _app2.default.start();
 
-/***/ })
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
 
-/******/ });
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var dom = {
+  fileInput: document.getElementById("fileElem"),
+  fileList: document.getElementById("fileList"),
+  listItems: document.createElement('ul'),
+  prefix: document.getElementById("prefix"),
+  padding: document.getElementById("padding"),
+  path: document.getElementById("path"),
+  canvas: document.getElementById("canvas"),
+  css: document.getElementById("css"),
+  dimensions: document.getElementById("dimensions"),
+  dropbox: document.getElementById("dropbox")
+};
+
+dom.fileList.appendChild(dom.listItems);
+
+exports.default = dom;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _dom = __webpack_require__(3);
+
+var _dom2 = _interopRequireDefault(_dom);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+  init: function init() {
+    console.log('dropbox initialized', _dom2.default.dropbox);
+  }
+};
+
+/***/ })
+/******/ ]);
 //# sourceMappingURL=bundle.js.map

@@ -1,15 +1,25 @@
+// import dom from './dom';
+import dropbox from './dropbox';
 import debounce from './utilities/debounce';
 
 let app = {
 
-    start: function(){
-        console.log('app started');
+  loadInProgress: false,
+  prefix:'',
+  padding:0,
+  path:'',
 
-        window.addEventListener('resize', debounce(() => {
-            console.log('resize');
-        }, 250));
+  start: function () {
 
-    }
+    console.log('app started');
+
+    dropbox.init();
+
+    window.addEventListener('resize', debounce(() => {
+      console.log('resize');
+    }, 250));
+
+  }
 
 
 };
