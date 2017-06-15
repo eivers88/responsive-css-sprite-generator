@@ -1,4 +1,4 @@
 ### Responsive CSS Sprite Generator
 ###### A tool for generating CSS sprite sheets using percentage based background positions
 ---
-Hosted version of the tool can be found [here](http://responsive-css.us/)
+A hosted version of the tool can be found at [responsive-css.us](http://responsive-css.us/)
