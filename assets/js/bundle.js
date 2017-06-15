@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -77,33 +77,34 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _dropbox = __webpack_require__(4);
+var _store = __webpack_require__(6);
 
-var _dropbox2 = _interopRequireDefault(_dropbox);
+var _store2 = _interopRequireDefault(_store);
 
-var _debounce = __webpack_require__(1);
+var _view = __webpack_require__(7);
 
-var _debounce2 = _interopRequireDefault(_debounce);
+var _view2 = _interopRequireDefault(_view);
+
+var _controller = __webpack_require__(8);
+
+var _controller2 = _interopRequireDefault(_controller);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// import dom from './dom';
-var app = {
+/**
+ * App structure inspired by https://github.com/tastejs/todomvc/tree/gh-pages/examples/vanilla-es6
+ * */
 
-  loadInProgress: false,
-  prefix: '',
-  padding: 0,
-  path: '',
+var app = {
 
   start: function start() {
 
     console.log('app started');
 
-    _dropbox2.default.init();
+    var store = new _store2.default('responsive-css-sprite-generator');
+    var view = new _view2.default();
 
-    window.addEventListener('resize', (0, _debounce2.default)(function () {
-      console.log('resize');
-    }, 250));
+    new _controller2.default(store, view);
   }
 
 };
@@ -111,39 +112,10 @@ var app = {
 exports.default = app;
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-// Returns a function, that, as long as it continues to be invoked, will not
-// be triggered. The function will be called after it stops being called for
-// N milliseconds. If `immediate` is passed, trigger the function on the
-// leading edge, instead of the trailing.
-function debounce(func, wait, immediate) {
-    var timeout = void 0;
-    return function () {
-        var context = this,
-            args = arguments;
-        var later = function later() {
-            timeout = null;
-            if (!immediate) func.apply(context, args);
-        };
-        var callNow = immediate && !timeout;
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-        if (callNow) func.apply(context, args);
-    };
-}
-
-exports.default = debounce;
-
-/***/ }),
-/* 2 */
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -158,34 +130,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 _app2.default.start();
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var dom = {
-  fileInput: document.getElementById("fileElem"),
-  fileList: document.getElementById("fileList"),
-  listItems: document.createElement('ul'),
-  prefix: document.getElementById("prefix"),
-  padding: document.getElementById("padding"),
-  path: document.getElementById("path"),
-  canvas: document.getElementById("canvas"),
-  css: document.getElementById("css"),
-  dimensions: document.getElementById("dimensions"),
-  dropbox: document.getElementById("dropbox")
-};
-
-dom.fileList.appendChild(dom.listItems);
-
-exports.default = dom;
-
-/***/ }),
-/* 4 */
+/* 5 */,
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -195,17 +141,101 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _dom = __webpack_require__(3);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _dom2 = _interopRequireDefault(_dom);
+var Store =
+/**
+ * @param {!string} name Database name
+ * @param {function()} [callback] Called when the Store is ready
+ */
+function Store(name, callback) {
+  _classCallCheck(this, Store);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  // TODO: Hook up local storage
 
-exports.default = {
-  init: function init() {
-    console.log('dropbox initialized', _dom2.default.dropbox);
+  this.id = 0;
+  this.blocks = [];
+  this.loaded = 0;
+  this.loadInProgress = false;
+  this.prefix = '';
+  this.padding = 0;
+  this.path = '';
+
+  if (callback) {
+    callback();
   }
 };
+
+exports.default = Store;
+;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var instance = null;
+
+var View = function View() {
+  _classCallCheck(this, View);
+
+  if (!instance) {
+    instance = this;
+  } else {
+    return instance;
+  }
+
+  this.fileInput = document.getElementById("fileElem");
+  this.fileList = document.getElementById("fileList");
+  this.listItems = document.createElement('ul');
+  this.prefix = document.getElementById("prefix");
+  this.padding = document.getElementById("padding");
+  this.path = document.getElementById("path");
+  this.canvas = document.getElementById("canvas");
+  this.css = document.getElementById("css");
+  this.dimensions = document.getElementById("dimensions");
+  this.dropbox = document.getElementById("dropbox");
+  this.fileList.appendChild(this.listItems);
+};
+
+exports.default = View;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Controller =
+/**
+ * @param  {!Store} store A Store instance
+ * @param  {!View} view A View instance
+ */
+function Controller(store, view) {
+  _classCallCheck(this, Controller);
+
+  this.store = store;
+  this.view = view;
+
+  console.log(this);
+};
+
+exports.default = Controller;
 
 /***/ })
 /******/ ]);

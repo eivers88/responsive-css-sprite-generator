@@ -1,23 +1,21 @@
-// import dom from './dom';
-import dropbox from './dropbox';
-import debounce from './utilities/debounce';
+import Store from './store';
+import View from './view';
+import Controller from './controller';
+
+/**
+ * App structure inspired by https://github.com/tastejs/todomvc/tree/gh-pages/examples/vanilla-es6
+ * */
 
 let app = {
-
-  loadInProgress: false,
-  prefix:'',
-  padding:0,
-  path:'',
 
   start: function () {
 
     console.log('app started');
 
-    dropbox.init();
+    let store = new Store('responsive-css-sprite-generator');
+    let view = new View();
 
-    window.addEventListener('resize', debounce(() => {
-      console.log('resize');
-    }, 250));
+    new Controller(store, view);
 
   }
 
