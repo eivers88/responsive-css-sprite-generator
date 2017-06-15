@@ -1,3 +1,4 @@
 import app from './app';
+import {$on} from './app/helpers';
 
-app.start();
+$on(window, 'load', app.start);

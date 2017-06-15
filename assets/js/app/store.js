@@ -1,9 +1,17 @@
+let instance = null;
+
 export default class Store {
   /**
    * @param {!string} name Database name
    * @param {function()} [callback] Called when the Store is ready
    */
   constructor(name, callback) {
+
+    if(!instance) {
+      instance = this;
+    } else {
+      return instance;
+    }
 
     // TODO: Hook up local storage
 
