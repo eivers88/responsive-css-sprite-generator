@@ -8,7 +8,15 @@ export default class Controller {
     this.store = store;
     this.view = view;
 
+    this.view.bindFileExplorer(this.addImages.bind(this));
+    this.view.bindDropboxImages(this.addImages.bind(this));
+
     console.log(this)
 
   }
+
+  addImages (files) {
+    console.log(files);
+  }
+
 }

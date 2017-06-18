@@ -1,3 +1,4 @@
+import {qs, $on, $delegate} from './helpers';
 let instance = null;
 
 export default class View {
@@ -10,17 +11,58 @@ export default class View {
       return instance;
     }
 
-    this.fileInput = document.getElementById("fileElem");
-    this.fileList = document.getElementById("fileList");
+    this.fileInput = qs("#fileElem");
+    this.fileList = qs("#fileList");
     this.listItems = document.createElement('ul');
-    this.prefix = document.getElementById("prefix");
-    this.padding = document.getElementById("padding");
-    this.path = document.getElementById("path");
-    this.canvas = document.getElementById("canvas");
-    this.css = document.getElementById("css");
-    this.dimensions = document.getElementById("dimensions");
-    this.dropbox = document.getElementById("dropbox");
+    this.prefix = qs("#prefix");
+    this.padding = qs("#padding");
+    this.path = qs("#path");
+    this.canvas = qs("#canvas");
+    this.css = qs("#css");
+    this.dimensions = qs("#dimensions");
+    this.dropbox = qs("#dropbox");
     this.fileList.appendChild(this.listItems);
+
+  }
+
+  bindFileExplorer (handler) {
+
+    $on(this.dropbox, 'click', (e)=>{
+      if(this.fileInput) {
+        this.fileInput.click();
+      }
+      e.preventDefault();
+      // TODO: Analytics
+    });
+
+    $on(this.fileInput, 'change', function(){
+      handler(this.files);
+    });
+
+  }
+
+  bindDropboxImages (handler) {
+
+    $on(this.dropbox, 'dragenter', (e)=>{
+      e.stopPropagation();
+      e.preventDefault();
+    });
+
+    $on(this.dropbox, 'dragover', (e)=>{
+      e.stopPropagation();
+      e.preventDefault();
+    });
+
+    $on(this.dropbox, 'drop', (e)=>{
+      e.stopPropagation();
+      e.preventDefault();
+
+      let dt = e.dataTransfer;
+      let files = dt.files;
+
+      handler(files);
+
+    });
 
   }
 

@@ -63,187 +63,11 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _store = __webpack_require__(2);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _view = __webpack_require__(3);
-
-var _view2 = _interopRequireDefault(_view);
-
-var _controller = __webpack_require__(1);
-
-var _controller2 = _interopRequireDefault(_controller);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * App structure inspired by https://github.com/tastejs/todomvc/tree/gh-pages/examples/vanilla-es6
- * */
-
-var app = {
-
-    start: function start() {
-
-        console.log('app started');
-
-        var store = new _store2.default('responsive-css-sprite-generator');
-        var view = new _view2.default();
-
-        new _controller2.default(store, view);
-    }
-
-};
-
-exports.default = app;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Controller =
-/**
- * @param  {!Store} store A Store instance
- * @param  {!View} view A View instance
- */
-function Controller(store, view) {
-    _classCallCheck(this, Controller);
-
-    this.store = store;
-    this.view = view;
-
-    console.log(this);
-};
-
-exports.default = Controller;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var instance = null;
-
-var Store =
-/**
- * @param {!string} name Database name
- * @param {function()} [callback] Called when the Store is ready
- */
-function Store(name, callback) {
-  _classCallCheck(this, Store);
-
-  if (!instance) {
-    instance = this;
-  } else {
-    return instance;
-  }
-
-  // TODO: Hook up local storage
-
-  this.id = 0;
-  this.blocks = [];
-  this.loaded = 0;
-  this.loadInProgress = false;
-  this.prefix = '';
-  this.padding = 0;
-  this.path = '';
-
-  if (callback) {
-    callback();
-  }
-};
-
-exports.default = Store;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var instance = null;
-
-var View = function View() {
-  _classCallCheck(this, View);
-
-  if (!instance) {
-    instance = this;
-  } else {
-    return instance;
-  }
-
-  this.fileInput = document.getElementById("fileElem");
-  this.fileList = document.getElementById("fileList");
-  this.listItems = document.createElement('ul');
-  this.prefix = document.getElementById("prefix");
-  this.padding = document.getElementById("padding");
-  this.path = document.getElementById("path");
-  this.canvas = document.getElementById("canvas");
-  this.css = document.getElementById("css");
-  this.dimensions = document.getElementById("dimensions");
-  this.dropbox = document.getElementById("dropbox");
-  this.fileList.appendChild(this.listItems);
-};
-
-exports.default = View;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _app = __webpack_require__(0);
-
-var _app2 = _interopRequireDefault(_app);
-
-var _helpers = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(0, _helpers.$on)(window, 'load', _app2.default.start);
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -344,6 +168,248 @@ function debounce(func, wait, immediate) {
     if (callNow) func.apply(context, args);
   };
 }
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _view = __webpack_require__(4);
+
+var _view2 = _interopRequireDefault(_view);
+
+var _controller = __webpack_require__(2);
+
+var _controller2 = _interopRequireDefault(_controller);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * App structure inspired by https://github.com/tastejs/todomvc/tree/gh-pages/examples/vanilla-es6
+ * */
+
+var app = {
+
+    start: function start() {
+
+        console.log('app started');
+
+        var store = new _store2.default('responsive-css-sprite-generator');
+        var view = new _view2.default();
+
+        new _controller2.default(store, view);
+    }
+
+};
+
+exports.default = app;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Controller = function () {
+  /**
+   * @param  {!Store} store A Store instance
+   * @param  {!View} view A View instance
+   */
+  function Controller(store, view) {
+    _classCallCheck(this, Controller);
+
+    this.store = store;
+    this.view = view;
+
+    this.view.bindFileExplorer(this.addImages.bind(this));
+    this.view.bindDropboxImages(this.addImages.bind(this));
+
+    console.log(this);
+  }
+
+  _createClass(Controller, [{
+    key: "addImages",
+    value: function addImages(files) {
+      console.log(files);
+    }
+  }]);
+
+  return Controller;
+}();
+
+exports.default = Controller;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var instance = null;
+
+var Store =
+/**
+ * @param {!string} name Database name
+ * @param {function()} [callback] Called when the Store is ready
+ */
+function Store(name, callback) {
+  _classCallCheck(this, Store);
+
+  if (!instance) {
+    instance = this;
+  } else {
+    return instance;
+  }
+
+  // TODO: Hook up local storage
+
+  this.id = 0;
+  this.blocks = [];
+  this.loaded = 0;
+  this.loadInProgress = false;
+  this.prefix = '';
+  this.padding = 0;
+  this.path = '';
+
+  if (callback) {
+    callback();
+  }
+};
+
+exports.default = Store;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _helpers = __webpack_require__(0);
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var instance = null;
+
+var View = function () {
+  function View() {
+    _classCallCheck(this, View);
+
+    if (!instance) {
+      instance = this;
+    } else {
+      return instance;
+    }
+
+    this.fileInput = (0, _helpers.qs)("#fileElem");
+    this.fileList = (0, _helpers.qs)("#fileList");
+    this.listItems = document.createElement('ul');
+    this.prefix = (0, _helpers.qs)("#prefix");
+    this.padding = (0, _helpers.qs)("#padding");
+    this.path = (0, _helpers.qs)("#path");
+    this.canvas = (0, _helpers.qs)("#canvas");
+    this.css = (0, _helpers.qs)("#css");
+    this.dimensions = (0, _helpers.qs)("#dimensions");
+    this.dropbox = (0, _helpers.qs)("#dropbox");
+    this.fileList.appendChild(this.listItems);
+  }
+
+  _createClass(View, [{
+    key: "bindFileExplorer",
+    value: function bindFileExplorer(handler) {
+      var _this = this;
+
+      (0, _helpers.$on)(this.dropbox, 'click', function (e) {
+        if (_this.fileInput) {
+          _this.fileInput.click();
+        }
+        e.preventDefault();
+        // TODO: Analytics
+      });
+
+      (0, _helpers.$on)(this.fileInput, 'change', function () {
+        handler(this.files);
+      });
+    }
+  }, {
+    key: "bindDropboxImages",
+    value: function bindDropboxImages(handler) {
+
+      (0, _helpers.$on)(this.dropbox, 'dragenter', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      (0, _helpers.$on)(this.dropbox, 'dragover', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      (0, _helpers.$on)(this.dropbox, 'drop', function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var dt = e.dataTransfer;
+        var files = dt.files;
+
+        handler(files);
+      });
+    }
+  }]);
+
+  return View;
+}();
+
+exports.default = View;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _app = __webpack_require__(1);
+
+var _app2 = _interopRequireDefault(_app);
+
+var _helpers = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(0, _helpers.$on)(window, 'load', _app2.default.start);
 
 /***/ })
 /******/ ]);
