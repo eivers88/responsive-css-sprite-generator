@@ -241,9 +241,11 @@ var Controller = function () {
     this.store = store;
     this.view = view;
 
+    this.view.setSettingsValues(this.store.getSettings());
+
     this.view.bindFileExplorer(this.addImages.bind(this));
     this.view.bindDropboxImages(this.addImages.bind(this));
-    this.view.bindTextInputs(this.updateInputValues.bind(this));
+    this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
     console.log(this);
   }
@@ -254,9 +256,10 @@ var Controller = function () {
       console.log(files);
     }
   }, {
-    key: 'updateInputValues',
-    value: function updateInputValues(inputValues) {
-      console.log('update input values', inputValues);
+    key: 'updateSettingsValues',
+    value: function updateSettingsValues(settings) {
+      console.log('update input values', settings);
+      this.store.saveSettings(settings);
     }
   }]);
 
@@ -276,38 +279,70 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var localStorage = window.localStorage;
 var instance = null;
-
-var Store =
-/**
- * @param {!string} name Database name
- * @param {function()} [callback] Called when the Store is ready
- */
-function Store(name, callback) {
-  _classCallCheck(this, Store);
-
-  if (!instance) {
-    instance = this;
-  } else {
-    return instance;
-  }
-
-  // TODO: Hook up local storage
-
-  this.id = 0;
-  this.blocks = [];
-  this.loaded = 0;
-  this.loadInProgress = false;
-  this.prefix = '';
-  this.padding = 0;
-  this.path = '';
-
-  if (callback) {
-    callback();
-  }
+var defaultSettings = {
+  prefix: '',
+  padding: 2,
+  path: 'sprite.png'
 };
+
+var Store = function () {
+  /**
+   * @param {!string} name Database name
+   * @param {function()} [callback] Called when the Store is ready
+   */
+  function Store(name, callback) {
+    _classCallCheck(this, Store);
+
+    if (!instance) {
+      instance = this;
+    } else {
+      return instance;
+    }
+
+    // init settings
+    if (localStorage.getItem(name)) {
+      // TODO: Check this object
+      this.settings = JSON.parse(localStorage.getItem(name));
+    } else {
+      this.settings = defaultSettings;
+      localStorage.setItem(name, JSON.stringify(this.settings));
+    }
+
+    this.name = name;
+    this.id = 0;
+    this.blocks = [];
+    this.loaded = 0;
+    this.loadInProgress = false;
+
+    console.log('store init', this.settings);
+
+    if (callback) {
+      callback();
+    }
+  }
+
+  _createClass(Store, [{
+    key: 'getSettings',
+    value: function getSettings() {
+      return this.settings;
+    }
+  }, {
+    key: 'saveSettings',
+    value: function saveSettings(settings) {
+      // TODO: Check this object
+      this.settings = settings;
+      localStorage.setItem(this.name, JSON.stringify(settings));
+    }
+  }]);
+
+  return Store;
+}();
 
 exports.default = Store;
 
@@ -395,26 +430,33 @@ var View = function () {
       });
     }
   }, {
-    key: "bindTextInputs",
-    value: function bindTextInputs(handler) {
+    key: "setSettingsValues",
+    value: function setSettingsValues(settings) {
+      this.$prefix.value = settings.prefix;
+      this.$padding.value = settings.padding;
+      this.$path.value = settings.path;
+    }
+  }, {
+    key: "getSettingsValues",
+    value: function getSettingsValues() {
+      return {
+        'prefix': this.$prefix.value,
+        'padding': parseInt(this.$padding.value),
+        'path': this.$path.value
+      };
+    }
+  }, {
+    key: "bindSettingsInputs",
+    value: function bindSettingsInputs(handler) {
       var _this2 = this;
 
       var returnValues = function returnValues() {
-        handler(_this2.getInputValues());
+        handler(_this2.getSettingsValues());
       };
 
       (0, _helpers.$on)(this.$prefix, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
       (0, _helpers.$on)(this.$padding, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
       (0, _helpers.$on)(this.$path, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
-    }
-  }, {
-    key: "getInputValues",
-    value: function getInputValues() {
-      return {
-        'prefix': this.$prefix.value,
-        'padding': this.$padding.value,
-        'path': this.$path.value
-      };
     }
   }]);
 

@@ -66,22 +66,28 @@ export default class View {
 
   }
 
-  bindTextInputs (handler) {
+  setSettingsValues (settings) {
+    this.$prefix.value = settings.prefix;
+    this.$padding.value = settings.padding;
+    this.$path.value = settings.path;
+  }
 
-    let returnValues = () => {handler(this.getInputValues())};
+  getSettingsValues () {
+    return {
+      'prefix': this.$prefix.value,
+      'padding': parseInt(this.$padding.value),
+      'path': this.$path.value
+    }
+  }
+
+  bindSettingsInputs (handler) {
+
+    let returnValues = () => {handler(this.getSettingsValues())};
 
     $on(this.$prefix, 'keyup', debounce(returnValues, 250, false));
     $on(this.$padding, 'keyup', debounce(returnValues, 250, false));
     $on(this.$path, 'keyup', debounce(returnValues, 250, false));
 
-  }
-
-  getInputValues () {
-    return {
-      'prefix': this.$prefix.value,
-      'padding': this.$padding.value,
-      'path': this.$path.value
-    }
   }
 
 }
