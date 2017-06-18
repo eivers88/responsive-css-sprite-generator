@@ -56,6 +56,7 @@ export function $delegate(target, selector, type, handler, capture) {
  * @returns {string} String with unsafe characters escaped with entity codes
  */
 export const escapeForHTML = s => s.replace(/[&<]/g, c => c === '&' ? '&amp;' : '&lt;');
+
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for

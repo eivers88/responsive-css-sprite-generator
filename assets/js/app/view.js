@@ -1,4 +1,4 @@
-import {qs, $on, $delegate} from './helpers';
+import {qs, $on, debounce} from './helpers';
 let instance = null;
 
 export default class View {
@@ -11,31 +11,31 @@ export default class View {
       return instance;
     }
 
-    this.fileInput = qs("#fileElem");
-    this.fileList = qs("#fileList");
-    this.listItems = document.createElement('ul');
-    this.prefix = qs("#prefix");
-    this.padding = qs("#padding");
-    this.path = qs("#path");
-    this.canvas = qs("#canvas");
-    this.css = qs("#css");
+    this.$fileInput = qs("#fileElem");
+    this.$fileList = qs("#fileList");
+    this.$listItems = document.createElement('ul');
+    this.$prefix = qs("#prefix");
+    this.$padding = qs("#padding");
+    this.$path = qs("#path");
+    this.$canvas = qs("#canvas");
+    this.$css = qs("#css");
     this.dimensions = qs("#dimensions");
-    this.dropbox = qs("#dropbox");
-    this.fileList.appendChild(this.listItems);
+    this.$dropbox = qs("#dropbox");
+    this.$fileList.appendChild(this.$listItems);
 
   }
 
   bindFileExplorer (handler) {
 
-    $on(this.dropbox, 'click', (e)=>{
-      if(this.fileInput) {
-        this.fileInput.click();
+    $on(this.$dropbox, 'click', (e)=>{
+      if(this.$fileInput) {
+        this.$fileInput.click();
       }
       e.preventDefault();
       // TODO: Analytics
     });
 
-    $on(this.fileInput, 'change', function(){
+    $on(this.$fileInput, 'change', function(){
       handler(this.files);
     });
 
@@ -43,17 +43,17 @@ export default class View {
 
   bindDropboxImages (handler) {
 
-    $on(this.dropbox, 'dragenter', (e)=>{
+    $on(this.$dropbox, 'dragenter', (e)=>{
       e.stopPropagation();
       e.preventDefault();
     });
 
-    $on(this.dropbox, 'dragover', (e)=>{
+    $on(this.$dropbox, 'dragover', (e)=>{
       e.stopPropagation();
       e.preventDefault();
     });
 
-    $on(this.dropbox, 'drop', (e)=>{
+    $on(this.$dropbox, 'drop', (e)=>{
       e.stopPropagation();
       e.preventDefault();
 
@@ -64,6 +64,24 @@ export default class View {
 
     });
 
+  }
+
+  bindTextInputs (handler) {
+
+    let returnValues = () => {handler(this.getInputValues())};
+
+    $on(this.$prefix, 'keyup', debounce(returnValues, 250, false));
+    $on(this.$padding, 'keyup', debounce(returnValues, 250, false));
+    $on(this.$path, 'keyup', debounce(returnValues, 250, false));
+
+  }
+
+  getInputValues () {
+    return {
+      'prefix': this.$prefix.value,
+      'padding': this.$padding.value,
+      'path': this.$path.value
+    }
   }
 
 }

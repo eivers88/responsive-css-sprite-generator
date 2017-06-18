@@ -10,6 +10,7 @@ export default class Controller {
 
     this.view.bindFileExplorer(this.addImages.bind(this));
     this.view.bindDropboxImages(this.addImages.bind(this));
+    this.view.bindTextInputs(this.updateInputValues.bind(this));
 
     console.log(this)
 
@@ -17,6 +18,10 @@ export default class Controller {
 
   addImages (files) {
     console.log(files);
+  }
+
+  updateInputValues (inputValues) {
+    console.log('update input values', inputValues);
   }
 
 }

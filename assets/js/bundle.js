@@ -142,6 +142,7 @@ var escapeForHTML = exports.escapeForHTML = function escapeForHTML(s) {
     return c === '&' ? '&amp;' : '&lt;';
   });
 };
+
 /**
  * Returns a function, that, as long as it continues to be invoked, will not
  * be triggered. The function will be called after it stops being called for
@@ -242,14 +243,20 @@ var Controller = function () {
 
     this.view.bindFileExplorer(this.addImages.bind(this));
     this.view.bindDropboxImages(this.addImages.bind(this));
+    this.view.bindTextInputs(this.updateInputValues.bind(this));
 
     console.log(this);
   }
 
   _createClass(Controller, [{
-    key: "addImages",
+    key: 'addImages',
     value: function addImages(files) {
       console.log(files);
+    }
+  }, {
+    key: 'updateInputValues',
+    value: function updateInputValues(inputValues) {
+      console.log('update input values', inputValues);
     }
   }]);
 
@@ -333,17 +340,17 @@ var View = function () {
       return instance;
     }
 
-    this.fileInput = (0, _helpers.qs)("#fileElem");
-    this.fileList = (0, _helpers.qs)("#fileList");
-    this.listItems = document.createElement('ul');
-    this.prefix = (0, _helpers.qs)("#prefix");
-    this.padding = (0, _helpers.qs)("#padding");
-    this.path = (0, _helpers.qs)("#path");
-    this.canvas = (0, _helpers.qs)("#canvas");
-    this.css = (0, _helpers.qs)("#css");
+    this.$fileInput = (0, _helpers.qs)("#fileElem");
+    this.$fileList = (0, _helpers.qs)("#fileList");
+    this.$listItems = document.createElement('ul');
+    this.$prefix = (0, _helpers.qs)("#prefix");
+    this.$padding = (0, _helpers.qs)("#padding");
+    this.$path = (0, _helpers.qs)("#path");
+    this.$canvas = (0, _helpers.qs)("#canvas");
+    this.$css = (0, _helpers.qs)("#css");
     this.dimensions = (0, _helpers.qs)("#dimensions");
-    this.dropbox = (0, _helpers.qs)("#dropbox");
-    this.fileList.appendChild(this.listItems);
+    this.$dropbox = (0, _helpers.qs)("#dropbox");
+    this.$fileList.appendChild(this.$listItems);
   }
 
   _createClass(View, [{
@@ -351,15 +358,15 @@ var View = function () {
     value: function bindFileExplorer(handler) {
       var _this = this;
 
-      (0, _helpers.$on)(this.dropbox, 'click', function (e) {
-        if (_this.fileInput) {
-          _this.fileInput.click();
+      (0, _helpers.$on)(this.$dropbox, 'click', function (e) {
+        if (_this.$fileInput) {
+          _this.$fileInput.click();
         }
         e.preventDefault();
         // TODO: Analytics
       });
 
-      (0, _helpers.$on)(this.fileInput, 'change', function () {
+      (0, _helpers.$on)(this.$fileInput, 'change', function () {
         handler(this.files);
       });
     }
@@ -367,17 +374,17 @@ var View = function () {
     key: "bindDropboxImages",
     value: function bindDropboxImages(handler) {
 
-      (0, _helpers.$on)(this.dropbox, 'dragenter', function (e) {
+      (0, _helpers.$on)(this.$dropbox, 'dragenter', function (e) {
         e.stopPropagation();
         e.preventDefault();
       });
 
-      (0, _helpers.$on)(this.dropbox, 'dragover', function (e) {
+      (0, _helpers.$on)(this.$dropbox, 'dragover', function (e) {
         e.stopPropagation();
         e.preventDefault();
       });
 
-      (0, _helpers.$on)(this.dropbox, 'drop', function (e) {
+      (0, _helpers.$on)(this.$dropbox, 'drop', function (e) {
         e.stopPropagation();
         e.preventDefault();
 
@@ -386,6 +393,28 @@ var View = function () {
 
         handler(files);
       });
+    }
+  }, {
+    key: "bindTextInputs",
+    value: function bindTextInputs(handler) {
+      var _this2 = this;
+
+      var returnValues = function returnValues() {
+        handler(_this2.getInputValues());
+      };
+
+      (0, _helpers.$on)(this.$prefix, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+      (0, _helpers.$on)(this.$padding, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+      (0, _helpers.$on)(this.$path, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+    }
+  }, {
+    key: "getInputValues",
+    value: function getInputValues() {
+      return {
+        'prefix': this.$prefix.value,
+        'padding': this.$padding.value,
+        'path': this.$path.value
+      };
     }
   }]);
 
