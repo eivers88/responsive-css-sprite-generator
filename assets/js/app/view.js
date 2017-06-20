@@ -3,7 +3,7 @@ let instance = null;
 
 export default class View {
 
-  constructor() {
+  constructor(template) {
 
     if(!instance) {
       instance = this;
@@ -11,6 +11,7 @@ export default class View {
       return instance;
     }
 
+    this.template = template;
     this.$fileInput = qs("#fileElem");
     this.$fileList = qs("#fileList");
     this.$listItems = document.createElement('ul');
@@ -66,6 +67,16 @@ export default class View {
 
   }
 
+  bindSettingsInputs (handler) {
+
+    let returnValues = () => {handler(this.getSettingsValues())};
+
+    $on(this.$prefix, 'keyup', debounce(returnValues, 250, false));
+    $on(this.$padding, 'keyup', debounce(returnValues, 250, false));
+    $on(this.$path, 'keyup', debounce(returnValues, 250, false));
+
+  }
+
   setSettingsValues (settings) {
     this.$prefix.value = settings.prefix;
     this.$padding.value = settings.padding;
@@ -80,14 +91,9 @@ export default class View {
     }
   }
 
-  bindSettingsInputs (handler) {
-
-    let returnValues = () => {handler(this.getSettingsValues())};
-
-    $on(this.$prefix, 'keyup', debounce(returnValues, 250, false));
-    $on(this.$padding, 'keyup', debounce(returnValues, 250, false));
-    $on(this.$path, 'keyup', debounce(returnValues, 250, false));
-
+  addListItem(item) {
+    let li = this.template.listItem(item);
+    this.$listItems.appendChild(li);
   }
 
 }

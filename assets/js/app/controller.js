@@ -20,6 +20,17 @@ export default class Controller {
 
   addImages (files) {
     console.log(files);
+
+    for(let i = 0; i < files.length; i++) {
+      this.view.addListItem({
+        id: i, // TODO: Make real id
+        src: window.URL.createObjectURL(files[i]),
+        name: files[i].name.substring(0, files[i].name.indexOf('.'))
+      });
+    }
+
+    // TODO: bind on image load
+
   }
 
   updateSettingsValues (settings) {

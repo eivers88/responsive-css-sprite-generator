@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -178,20 +178,24 @@ function debounce(func, wait, immediate) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _view = __webpack_require__(4);
+var _view = __webpack_require__(5);
 
 var _view2 = _interopRequireDefault(_view);
 
 var _controller = __webpack_require__(2);
 
 var _controller2 = _interopRequireDefault(_controller);
+
+var _templates = __webpack_require__(4);
+
+var _templates2 = _interopRequireDefault(_templates);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -201,15 +205,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var app = {
 
-    start: function start() {
+  start: function start() {
 
-        console.log('app started');
+    var template = new _templates2.default();
 
-        var store = new _store2.default('responsive-css-sprite-generator');
-        var view = new _view2.default();
+    var store = new _store2.default('responsive-css-sprite-generator');
+    var view = new _view2.default(template);
 
-        new _controller2.default(store, view);
-    }
+    new _controller2.default(store, view);
+
+    console.log('app started');
+  }
 
 };
 
@@ -254,6 +260,16 @@ var Controller = function () {
     key: 'addImages',
     value: function addImages(files) {
       console.log(files);
+
+      for (var i = 0; i < files.length; i++) {
+        this.view.addListItem({
+          id: i, // TODO: Make real id
+          src: window.URL.createObjectURL(files[i]),
+          name: files[i].name.substring(0, files[i].name.indexOf('.'))
+        });
+      }
+
+      // TODO: bind on image load
     }
   }, {
     key: 'updateSettingsValues',
@@ -359,6 +375,41 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var parser = new DOMParser();
+
+var Template = function () {
+  function Template() {
+    _classCallCheck(this, Template);
+  }
+
+  _createClass(Template, [{
+    key: "listItem",
+    value: function listItem(item) {
+      var xmlString = "<li data-id=\"" + item.id + "\">" + ("<img src=\"" + item.src + "\" height=\"60\" />") + ("<span>" + item.name + "</span>") + "<div class=\"remove\"></div>" + "</li>";
+      return parser.parseFromString(xmlString, "text/xml").querySelector('li');
+    }
+  }]);
+
+  return Template;
+}();
+
+exports.default = Template;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _helpers = __webpack_require__(0);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -366,7 +417,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var instance = null;
 
 var View = function () {
-  function View() {
+  function View(template) {
     _classCallCheck(this, View);
 
     if (!instance) {
@@ -375,6 +426,7 @@ var View = function () {
       return instance;
     }
 
+    this.template = template;
     this.$fileInput = (0, _helpers.qs)("#fileElem");
     this.$fileList = (0, _helpers.qs)("#fileList");
     this.$listItems = document.createElement('ul');
@@ -430,6 +482,19 @@ var View = function () {
       });
     }
   }, {
+    key: "bindSettingsInputs",
+    value: function bindSettingsInputs(handler) {
+      var _this2 = this;
+
+      var returnValues = function returnValues() {
+        handler(_this2.getSettingsValues());
+      };
+
+      (0, _helpers.$on)(this.$prefix, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+      (0, _helpers.$on)(this.$padding, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+      (0, _helpers.$on)(this.$path, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+    }
+  }, {
     key: "setSettingsValues",
     value: function setSettingsValues(settings) {
       this.$prefix.value = settings.prefix;
@@ -446,17 +511,10 @@ var View = function () {
       };
     }
   }, {
-    key: "bindSettingsInputs",
-    value: function bindSettingsInputs(handler) {
-      var _this2 = this;
-
-      var returnValues = function returnValues() {
-        handler(_this2.getSettingsValues());
-      };
-
-      (0, _helpers.$on)(this.$prefix, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
-      (0, _helpers.$on)(this.$padding, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
-      (0, _helpers.$on)(this.$path, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+    key: "addListItem",
+    value: function addListItem(item) {
+      var li = this.template.listItem(item);
+      this.$listItems.appendChild(li);
     }
   }]);
 
@@ -466,7 +524,7 @@ var View = function () {
 exports.default = View;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
