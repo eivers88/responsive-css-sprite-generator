@@ -42,6 +42,12 @@ export default class Store {
 
   }
 
+  getNewId () {
+    let newId = this.id;
+    this.id++;
+    return newId;
+  }
+
   getSettings () {
     return this.settings;
   }

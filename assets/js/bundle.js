@@ -178,7 +178,7 @@ function debounce(func, wait, immediate) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _store = __webpack_require__(3);
@@ -205,17 +205,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var app = {
 
-  start: function start() {
+    start: function start() {
 
-    var template = new _templates2.default();
+        var template = new _templates2.default();
 
-    var store = new _store2.default('responsive-css-sprite-generator');
-    var view = new _view2.default(template);
+        var store = new _store2.default('responsive-css-sprite-generator');
+        var view = new _view2.default(template);
 
-    new _controller2.default(store, view);
+        new _controller2.default(store, view);
 
-    console.log('app started');
-  }
+        console.log('app started');
+    }
 
 };
 
@@ -259,17 +259,23 @@ var Controller = function () {
   _createClass(Controller, [{
     key: 'addImages',
     value: function addImages(files) {
-      console.log(files);
+      // TODO: Add a flag indicating file loads are currently in progress
 
       for (var i = 0; i < files.length; i++) {
         this.view.addListItem({
-          id: i, // TODO: Make real id
+          id: this.store.getNewId(),
           src: window.URL.createObjectURL(files[i]),
-          name: files[i].name.substring(0, files[i].name.indexOf('.'))
+          name: files[i].name.substring(0, files[i].name.indexOf('.')),
+          onLoadSuccess: this.onLoadSuccess.bind(this)
         });
       }
-
-      // TODO: bind on image load
+    }
+  }, {
+    key: 'onLoadSuccess',
+    value: function onLoadSuccess(candidate) {
+      console.log(candidate);
+      // TODO: Check if all images have finished loading
+      // TODO: Pass on to our texture packer
     }
   }, {
     key: 'updateSettingsValues',
@@ -344,6 +350,13 @@ var Store = function () {
   }
 
   _createClass(Store, [{
+    key: 'getNewId',
+    value: function getNewId() {
+      var newId = this.id;
+      this.id++;
+      return newId;
+    }
+  }, {
     key: 'getSettings',
     value: function getSettings() {
       return this.settings;
@@ -377,18 +390,41 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var parser = new DOMParser();
-
 var Template = function () {
   function Template() {
     _classCallCheck(this, Template);
   }
 
   _createClass(Template, [{
-    key: "listItem",
+    key: 'listItem',
     value: function listItem(item) {
-      var xmlString = "<li data-id=\"" + item.id + "\">" + ("<img src=\"" + item.src + "\" height=\"60\" />") + ("<span>" + item.name + "</span>") + "<div class=\"remove\"></div>" + "</li>";
-      return parser.parseFromString(xmlString, "text/xml").querySelector('li');
+
+      var li = document.createElement('li');
+      var img = document.createElement('img');
+      var info = document.createElement('span');
+      var remove = document.createElement('div');
+
+      li.setAttribute('data-id', item.id);
+
+      img.src = item.src;
+      img.height = 60;
+      img.onload = function () {
+        window.URL.revokeObjectURL(item.src);
+        item.onLoadSuccess({
+          img: this,
+          name: item.name,
+          id: item.id
+        });
+      };
+
+      li.appendChild(img);
+      info.innerHTML = item.name;
+      li.appendChild(info);
+
+      remove.classList.add('remove');
+      li.appendChild(remove);
+
+      return li;
     }
   }]);
 

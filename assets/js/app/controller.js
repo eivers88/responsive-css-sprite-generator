@@ -19,18 +19,23 @@ export default class Controller {
   }
 
   addImages (files) {
-    console.log(files);
+    // TODO: Add a flag indicating file loads are currently in progress
 
     for(let i = 0; i < files.length; i++) {
       this.view.addListItem({
-        id: i, // TODO: Make real id
+        id: this.store.getNewId(),
         src: window.URL.createObjectURL(files[i]),
-        name: files[i].name.substring(0, files[i].name.indexOf('.'))
+        name: files[i].name.substring(0, files[i].name.indexOf('.')),
+        onLoadSuccess: this.onLoadSuccess.bind(this)
       });
     }
 
-    // TODO: bind on image load
+  }
 
+  onLoadSuccess (candidate) {
+    console.log(candidate);
+    // TODO: Check if all images have finished loading
+    // TODO: Pass on to our texture packer
   }
 
   updateSettingsValues (settings) {
