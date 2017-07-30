@@ -1,3 +1,5 @@
+import TexturePacker from './texture-packer';
+
 export default class Controller {
   /**
    * @param  {!Store} store A Store instance
@@ -19,7 +21,9 @@ export default class Controller {
     this.view.bindRemoveBtn(this.removeImage.bind(this));
     this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
-    console.log(this)
+    this.texturePacker = new TexturePacker(this.view.$canvas);
+
+    // console.log(this)
 
   }
 
@@ -71,9 +75,11 @@ export default class Controller {
   }
 
 
-  onLoadSuccess (candidate) {
+  onLoadSuccess (texture) {
     // TODO: Pass on to our texture packer
-    console.log('onLoadSuccess', candidate);
+    // console.log('onLoadSuccess', texture);
+
+    this.texturePacker.addTexture(texture);
 
     this.imgLoaded++;
 
@@ -89,6 +95,7 @@ export default class Controller {
     this.imgQueued = 0;
     this.imgLoaded = 0;
     // TODO: Sort and generate our sprite sheet
+    this.texturePacker.sort();
   }
 
   updateSettingsValues (settings) {

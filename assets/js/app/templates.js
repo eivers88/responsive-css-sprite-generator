@@ -14,6 +14,8 @@ export default class Template {
       window.URL.revokeObjectURL(item.src);
       item.onLoadSuccess({
         img: this,
+        w: this.naturalWidth,
+        h: this.naturalHeight,
         name: item.name,
         id: item.id
       });

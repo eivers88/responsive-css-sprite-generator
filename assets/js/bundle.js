@@ -234,6 +234,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _texturePacker = __webpack_require__(7);
+
+var _texturePacker2 = _interopRequireDefault(_texturePacker);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Controller = function () {
@@ -258,11 +264,13 @@ var Controller = function () {
     this.view.bindRemoveBtn(this.removeImage.bind(this));
     this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
-    console.log(this);
+    this.texturePacker = new _texturePacker2.default(this.view.$canvas);
+
+    // console.log(this)
   }
 
   _createClass(Controller, [{
-    key: "addImages",
+    key: 'addImages',
     value: function addImages(data) {
 
       if (this.loadInProgress) {
@@ -297,7 +305,7 @@ var Controller = function () {
       }
     }
   }, {
-    key: "removeImage",
+    key: 'removeImage',
     value: function removeImage(e) {
       if (this.loadInProgress) {
         console.log('Cannot remove image while load is in progress');
@@ -309,10 +317,12 @@ var Controller = function () {
       }
     }
   }, {
-    key: "onLoadSuccess",
-    value: function onLoadSuccess(candidate) {
+    key: 'onLoadSuccess',
+    value: function onLoadSuccess(texture) {
       // TODO: Pass on to our texture packer
-      console.log('onLoadSuccess', candidate);
+      // console.log('onLoadSuccess', texture);
+
+      this.texturePacker.addTexture(texture);
 
       this.imgLoaded++;
 
@@ -321,16 +331,17 @@ var Controller = function () {
       }
     }
   }, {
-    key: "loadComplete",
+    key: 'loadComplete',
     value: function loadComplete() {
       console.log('all files loaded!');
       this.loadInProgress = false;
       this.imgQueued = 0;
       this.imgLoaded = 0;
       // TODO: Sort and generate our sprite sheet
+      this.texturePacker.sort();
     }
   }, {
-    key: "updateSettingsValues",
+    key: 'updateSettingsValues',
     value: function updateSettingsValues(settings) {
       console.log('update input values', settings);
       this.store.saveSettings(settings);
@@ -390,11 +401,8 @@ var Store = function () {
 
     this.name = name;
     this.id = 0;
-    this.blocks = [];
-    this.loaded = 0;
-    this.loadInProgress = false;
 
-    console.log('store init', this.settings);
+    // console.log('store init', this.settings);
 
     if (callback) {
       callback();
@@ -464,6 +472,8 @@ var Template = function () {
         window.URL.revokeObjectURL(item.src);
         item.onLoadSuccess({
           img: this,
+          w: this.naturalWidth,
+          h: this.naturalHeight,
           name: item.name,
           id: item.id
         });
@@ -632,6 +642,46 @@ var _helpers = __webpack_require__(0);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _helpers.$on)(window, 'load', _app2.default.start);
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var TexturePacker = function () {
+  function TexturePacker(canvas) {
+    _classCallCheck(this, TexturePacker);
+
+    this.canvas = canvas;
+    this.textures = [];
+  }
+
+  _createClass(TexturePacker, [{
+    key: 'addTexture',
+    value: function addTexture(texture) {
+      this.textures.push(texture);
+    }
+  }, {
+    key: 'sort',
+    value: function sort() {
+      console.log('sort', this.textures);
+    }
+  }]);
+
+  return TexturePacker;
+}();
+
+exports.default = TexturePacker;
 
 /***/ })
 /******/ ]);

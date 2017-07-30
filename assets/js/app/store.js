@@ -30,11 +30,8 @@ export default class Store {
 
     this.name = name;
     this.id = 0;
-    this.blocks = [];
-    this.loaded = 0;
-    this.loadInProgress = false;
 
-    console.log('store init', this.settings);
+    // console.log('store init', this.settings);
 
     if(callback){
       callback();
