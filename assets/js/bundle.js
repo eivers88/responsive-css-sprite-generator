@@ -244,6 +244,10 @@ var Controller = function () {
   function Controller(store, view) {
     _classCallCheck(this, Controller);
 
+    this.imgQueued = 0;
+    this.imgLoaded = 0;
+    this.loadInProgress = false;
+
     this.store = store;
     this.view = view;
 
@@ -251,17 +255,39 @@ var Controller = function () {
 
     this.view.bindFileExplorer(this.addImages.bind(this));
     this.view.bindDropboxImages(this.addImages.bind(this));
+    this.view.bindRemoveBtn(this.removeImage.bind(this));
     this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
     console.log(this);
   }
 
   _createClass(Controller, [{
-    key: 'addImages',
-    value: function addImages(files) {
-      // TODO: Add a flag indicating file loads are currently in progress
+    key: "addImages",
+    value: function addImages(data) {
+
+      if (this.loadInProgress) {
+        console.log('Cannot add images while load is in progress');
+        return;
+      }
+
+      var files = [];
+
+      // add only image files to our file list
+      for (var prop in data) {
+        if (data[prop].type === "image/png" || data[prop].type === "image/jpeg") {
+          files.push(data[prop]);
+        }
+      }
+
+      if (files.length === 0) {
+        return;
+      }
+
+      this.loadInProgress = true;
+      this.imgQueued += files.length;
 
       for (var i = 0; i < files.length; i++) {
+
         this.view.addListItem({
           id: this.store.getNewId(),
           src: window.URL.createObjectURL(files[i]),
@@ -271,14 +297,40 @@ var Controller = function () {
       }
     }
   }, {
-    key: 'onLoadSuccess',
-    value: function onLoadSuccess(candidate) {
-      console.log(candidate);
-      // TODO: Check if all images have finished loading
-      // TODO: Pass on to our texture packer
+    key: "removeImage",
+    value: function removeImage(e) {
+      if (this.loadInProgress) {
+        console.log('Cannot remove image while load is in progress');
+        return;
+      }
+      if (e.target && e.target.classList.contains('remove')) {
+        e.target.parentNode.parentNode.removeChild(e.target.parentNode);
+        // TODO: update texture packer
+      }
     }
   }, {
-    key: 'updateSettingsValues',
+    key: "onLoadSuccess",
+    value: function onLoadSuccess(candidate) {
+      // TODO: Pass on to our texture packer
+      console.log('onLoadSuccess', candidate);
+
+      this.imgLoaded++;
+
+      if (this.imgLoaded === this.imgQueued) {
+        this.loadComplete();
+      }
+    }
+  }, {
+    key: "loadComplete",
+    value: function loadComplete() {
+      console.log('all files loaded!');
+      this.loadInProgress = false;
+      this.imgQueued = 0;
+      this.imgLoaded = 0;
+      // TODO: Sort and generate our sprite sheet
+    }
+  }, {
+    key: "updateSettingsValues",
     value: function updateSettingsValues(settings) {
       console.log('update input values', settings);
       this.store.saveSettings(settings);
@@ -529,6 +581,11 @@ var View = function () {
       (0, _helpers.$on)(this.$prefix, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
       (0, _helpers.$on)(this.$padding, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
       (0, _helpers.$on)(this.$path, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
+    }
+  }, {
+    key: "bindRemoveBtn",
+    value: function bindRemoveBtn(handler) {
+      (0, _helpers.$on)(this.$fileList, 'click', handler);
     }
   }, {
     key: "setSettingsValues",

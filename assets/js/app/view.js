@@ -77,6 +77,10 @@ export default class View {
 
   }
 
+  bindRemoveBtn (handler) {
+    $on(this.$fileList, 'click', handler);
+  }
+
   setSettingsValues (settings) {
     this.$prefix.value = settings.prefix;
     this.$padding.value = settings.padding;
