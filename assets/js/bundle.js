@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 7);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -178,14 +178,14 @@ function debounce(func, wait, immediate) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _view = __webpack_require__(5);
+var _view = __webpack_require__(6);
 
 var _view2 = _interopRequireDefault(_view);
 
@@ -205,17 +205,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var app = {
 
-    start: function start() {
+  start: function start() {
 
-        var template = new _templates2.default();
+    var template = new _templates2.default();
 
-        var store = new _store2.default('responsive-css-sprite-generator');
-        var view = new _view2.default(template);
+    var store = new _store2.default('responsive-css-sprite-generator');
+    var view = new _view2.default(template);
 
-        new _controller2.default(store, view);
+    new _controller2.default(store, view);
 
-        console.log('app started');
-    }
+    console.log('app started!');
+  }
 
 };
 
@@ -234,7 +234,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _texturePacker = __webpack_require__(7);
+var _texturePacker = __webpack_require__(5);
 
 var _texturePacker2 = _interopRequireDefault(_texturePacker);
 
@@ -264,7 +264,7 @@ var Controller = function () {
     this.view.bindRemoveBtn(this.removeImage.bind(this));
     this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
-    this.texturePacker = new _texturePacker2.default(this.view.$canvas);
+    this.texturePacker = new _texturePacker2.default(this.view.$canvas, this.view.getSettingsValues());
 
     // console.log(this)
   }
@@ -319,8 +319,6 @@ var Controller = function () {
   }, {
     key: 'onLoadSuccess',
     value: function onLoadSuccess(texture) {
-      // TODO: Pass on to our texture packer
-      // console.log('onLoadSuccess', texture);
 
       this.texturePacker.addTexture(texture);
 
@@ -337,8 +335,9 @@ var Controller = function () {
       this.loadInProgress = false;
       this.imgQueued = 0;
       this.imgLoaded = 0;
-      // TODO: Sort and generate our sprite sheet
       this.texturePacker.sort();
+      this.texturePacker.fit();
+      this.texturePacker.draw();
     }
   }, {
     key: 'updateSettingsValues',
@@ -443,7 +442,7 @@ exports.default = Store;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -451,52 +450,216 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Template = function () {
-  function Template() {
-    _classCallCheck(this, Template);
-  }
-
-  _createClass(Template, [{
-    key: 'listItem',
-    value: function listItem(item) {
-
-      var li = document.createElement('li');
-      var img = document.createElement('img');
-      var info = document.createElement('span');
-      var remove = document.createElement('div');
-
-      li.setAttribute('data-id', item.id);
-
-      img.src = item.src;
-      img.height = 60;
-      img.onload = function () {
-        window.URL.revokeObjectURL(item.src);
-        item.onLoadSuccess({
-          img: this,
-          w: this.naturalWidth,
-          h: this.naturalHeight,
-          name: item.name,
-          id: item.id
-        });
-      };
-
-      li.appendChild(img);
-      info.innerHTML = item.name;
-      li.appendChild(info);
-
-      remove.classList.add('remove');
-      li.appendChild(remove);
-
-      return li;
+    function Template() {
+        _classCallCheck(this, Template);
     }
-  }]);
 
-  return Template;
+    _createClass(Template, [{
+        key: 'listItem',
+        value: function listItem(item) {
+
+            var li = document.createElement('li');
+            var img = document.createElement('img');
+            var info = document.createElement('span');
+            var remove = document.createElement('div');
+
+            li.setAttribute('data-id', item.id);
+
+            img.src = item.src;
+            img.height = 60;
+            img.onload = function () {
+                window.URL.revokeObjectURL(item.src);
+                item.onLoadSuccess({
+                    img: this,
+                    w: this.naturalWidth,
+                    h: this.naturalHeight,
+                    name: item.name,
+                    id: item.id
+                });
+            };
+
+            li.appendChild(img);
+            info.innerHTML = item.name;
+            li.appendChild(info);
+
+            remove.classList.add('remove');
+            li.appendChild(remove);
+
+            return li;
+        }
+    }]);
+
+    return Template;
 }();
 
 exports.default = Template;
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function findNode(root, w, h) {
+  if (root.used) {
+    return findNode(root.right, w, h) || findNode(root.down, w, h);
+  } else if (w <= root.w && h <= root.h) {
+    return root;
+  } else {
+    return null;
+  }
+}
+
+function splitNode(node, w, h) {
+  node.used = true;
+  node.down = { x: node.x, y: node.y + h, w: node.w, h: node.h - h };
+  node.right = { x: node.x + w, y: node.y, w: node.w - w, h: h };
+  return node;
+}
+
+var TexturePacker = function () {
+  function TexturePacker(canvas, _ref) {
+    var padding = _ref.padding,
+        prefix = _ref.prefix,
+        path = _ref.path;
+
+    _classCallCheck(this, TexturePacker);
+
+    this.canvas = canvas;
+    this.textures = [];
+
+    this.root = {
+      x: 0, // origin x
+      y: 0, // origin y
+      w: 256 - padding, // width
+      h: 256 - padding, // height
+      p: padding
+    };
+
+    this.prefix = prefix;
+    this.path = path;
+
+    console.log('packer', this);
+  }
+
+  _createClass(TexturePacker, [{
+    key: 'addTexture',
+    value: function addTexture(texture) {
+      this.textures.push(texture);
+    }
+  }, {
+    key: 'sort',
+    value: function sort() {
+      this.textures.sort(function (a, b) {
+        if (a.h < b.h) {
+          return 1;
+        }
+        if (a.h > b.h) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+  }, {
+    key: 'fit',
+    value: function fit() {
+      var i = void 0,
+          node = void 0,
+          texture = void 0,
+          pad = this.root.p;
+      for (i = 0; i < this.textures.length; i++) {
+        texture = this.textures[i];
+        texture.fit = false;
+        node = findNode(this.root, texture.w + pad, texture.h + pad);
+        if (node) {
+          texture.fit = splitNode(node, texture.w + pad, texture.h + pad);
+        }
+        if (!texture.fit) {
+          this.resize();
+          break;
+        }
+      }
+    }
+  }, {
+    key: 'resize',
+    value: function resize() {
+      var w = void 0,
+          h = void 0,
+          pad = this.root.p;
+      if (this.root.w > this.root.h) {
+        w = this.root.w + pad;
+        h = (this.root.h + pad) * 2;
+      } else {
+        w = (this.root.w + pad) * 2;
+        h = this.root.h + pad;
+      }
+      this.root = {
+        x: 0, // origin x
+        y: 0, // origin y
+        w: w - pad, // width
+        h: h - pad, // height
+        p: pad
+      };
+      this.fit();
+    }
+  }, {
+    key: 'draw',
+    value: function draw() {
+
+      // TODO: Calc CSS output
+
+      var canvas = this.canvas;
+      var ctx = canvas.getContext('2d');
+      var pad = this.root.p;
+      var width = this.root.w + pad;
+      var height = this.root.h + pad;
+
+      canvas.width = width;
+      canvas.height = height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      this.textures.sort(function (a, b) {
+        var nameA = a.name.toUpperCase();
+        var nameB = b.name.toUpperCase();
+        return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+      });
+
+      for (var i = 0; i < this.textures.length; i++) {
+        var texture = this.textures[i];
+        if (texture.fit) {
+
+          // turn on for testing
+          ctx.fillRect(texture.fit.x + pad, texture.fit.y + pad, texture.w, texture.h);
+          ctx.stroke();
+
+          ctx.drawImage(texture.img, texture.fit.x + pad, texture.fit.y + pad);
+        }
+      }
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+      // TODO: Update texture packer when settings change or images are added/removed
+    }
+  }]);
+
+  return TexturePacker;
+}();
+
+exports.default = TexturePacker;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -627,7 +790,7 @@ var View = function () {
 exports.default = View;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -642,46 +805,6 @@ var _helpers = __webpack_require__(0);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (0, _helpers.$on)(window, 'load', _app2.default.start);
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var TexturePacker = function () {
-  function TexturePacker(canvas) {
-    _classCallCheck(this, TexturePacker);
-
-    this.canvas = canvas;
-    this.textures = [];
-  }
-
-  _createClass(TexturePacker, [{
-    key: 'addTexture',
-    value: function addTexture(texture) {
-      this.textures.push(texture);
-    }
-  }, {
-    key: 'sort',
-    value: function sort() {
-      console.log('sort', this.textures);
-    }
-  }]);
-
-  return TexturePacker;
-}();
-
-exports.default = TexturePacker;
 
 /***/ })
 /******/ ]);

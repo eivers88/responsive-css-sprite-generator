@@ -18,7 +18,7 @@ let app = {
 
     new Controller(store, view);
 
-    console.log('app started');
+    console.log('app started!');
 
   }
 

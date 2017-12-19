@@ -21,7 +21,7 @@ export default class Controller {
     this.view.bindRemoveBtn(this.removeImage.bind(this));
     this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
-    this.texturePacker = new TexturePacker(this.view.$canvas);
+    this.texturePacker = new TexturePacker(this.view.$canvas, this.view.getSettingsValues());
 
     // console.log(this)
 
@@ -76,8 +76,6 @@ export default class Controller {
 
 
   onLoadSuccess (texture) {
-    // TODO: Pass on to our texture packer
-    // console.log('onLoadSuccess', texture);
 
     this.texturePacker.addTexture(texture);
 
@@ -94,8 +92,9 @@ export default class Controller {
     this.loadInProgress = false;
     this.imgQueued = 0;
     this.imgLoaded = 0;
-    // TODO: Sort and generate our sprite sheet
     this.texturePacker.sort();
+    this.texturePacker.fit();
+    this.texturePacker.draw();
   }
 
   updateSettingsValues (settings) {
