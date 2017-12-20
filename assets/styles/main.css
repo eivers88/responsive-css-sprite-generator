@@ -1,9 +1,11 @@
 html {
+  -webkit-box-sizing: border-box;
   box-sizing: border-box;
   font-family: 'Roboto Condensed', sans-serif;
   color: #24292e; }
 
 *, *:before, *:after {
+  -webkit-box-sizing: inherit;
   box-sizing: inherit; }
 
 html, body {
@@ -104,11 +106,12 @@ header {
     width: 24px;
     height: 24px;
     background: transparent url("../img/ic_clear_black_24px.svg") 0 0 no-repeat;
-    /*background: transparent url('../img/ic_remove_circle_outline_black_24px.svg') 0 0 no-repeat;*/
     cursor: pointer;
     opacity: 0.5;
+    -webkit-filter: invert(1);
     filter: invert(1); }
     .file-list .remove:hover {
+      -webkit-transform: scale(1.1);
       -ms-transform: scale(1.1);
       transform: scale(1.1); }
 
@@ -150,7 +153,6 @@ header {
   margin: 0 auto;
   float: left;
   position: relative;
-  /*width: 100%;*/
   min-width: 100%;
   min-height: 512px;
   cursor: pointer; }
@@ -172,6 +174,7 @@ textarea {
   font-family: 'Roboto Condensed', sans-serif;
   padding: 10px 8px;
   background-color: #F5F5F5;
+  -webkit-box-shadow: none;
   box-shadow: none;
   border: solid 1px #E0E0E0; }
 
@@ -180,6 +183,8 @@ textarea {
   height: 65px;
   border-radius: 5px;
   cursor: pointer;
+  -webkit-transition: background-color 300ms ease;
+  -o-transition: background-color 300ms ease;
   transition: background-color 300ms ease; }
   .button:hover {
     background-color: #00E5FF; }

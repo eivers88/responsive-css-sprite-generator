@@ -124,7 +124,6 @@ header {
     width: 24px;
     height: 24px;
     background: transparent url('../img/ic_clear_black_24px.svg') 0 0 no-repeat;
-    /*background: transparent url('../img/ic_remove_circle_outline_black_24px.svg') 0 0 no-repeat;*/
     cursor: pointer;
     opacity: 0.5;
     filter: invert(1);
@@ -175,8 +174,6 @@ header {
   margin: 0 auto;
   float: left;
   position: relative;
-  /*width: 100%;*/
-  // min-width: 1024px;
   min-width: 100%;
   min-height: 512px;
   cursor: pointer;
