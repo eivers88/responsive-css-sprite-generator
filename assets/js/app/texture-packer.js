@@ -156,8 +156,6 @@ export default class TexturePacker {
 
   remove (id) {
 
-    console.log('remove ', id);
-
     for(let i = this.textures.length; i--;) {
       let texture = this.textures[i];
       if(texture.id === id) {
@@ -179,15 +177,26 @@ export default class TexturePacker {
       p: pad
     };
 
-    let css = this.pack();
-
-    return css;
+    return this.pack();
 
   }
 
-  update() {
+  updateSettings({padding, prefix, path}) {
 
-    console.log('TODO: Update texture packer when settings change');
+    this.ctx.clearRect(0, 0, canvas.width || DEFAULT_SIZE, canvas.height || DEFAULT_SIZE);
+
+    this.root = {
+      x: 0, // origin x
+      y: 0, // origin y
+      w: DEFAULT_SIZE - padding, // width
+      h: DEFAULT_SIZE - padding, // height
+      p: padding
+    };
+
+    this.prefix = prefix;
+    this.path = path;
+
+    return this.pack();
 
   }
 

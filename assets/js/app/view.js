@@ -88,9 +88,10 @@ export default class View {
   }
 
   getSettingsValues () {
+    let p = parseInt(this.$padding.value);
     return {
       'prefix': this.$prefix.value,
-      'padding': parseInt(this.$padding.value),
+      'padding': Number.isInteger(p) ? p : 0,
       'path': this.$path.value
     }
   }

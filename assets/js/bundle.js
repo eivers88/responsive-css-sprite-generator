@@ -343,6 +343,8 @@ var Controller = function () {
     value: function updateSettingsValues(settings) {
       console.log('update input values', settings);
       this.store.saveSettings(settings);
+      var css = this.texturePacker.updateSettings(settings);
+      this.view.setCSSValue(css);
     }
   }]);
 
@@ -673,8 +675,6 @@ var TexturePacker = function () {
     key: 'remove',
     value: function remove(id) {
 
-      console.log('remove ', id);
-
       for (var i = this.textures.length; i--;) {
         var texture = this.textures[i];
         if (texture.id === id) {
@@ -696,15 +696,30 @@ var TexturePacker = function () {
         p: pad
       };
 
-      var css = this.pack();
-
-      return css;
+      return this.pack();
     }
   }, {
-    key: 'update',
-    value: function update() {
+    key: 'updateSettings',
+    value: function updateSettings(_ref2) {
+      var padding = _ref2.padding,
+          prefix = _ref2.prefix,
+          path = _ref2.path;
 
-      console.log('TODO: Update texture packer when settings change');
+
+      this.ctx.clearRect(0, 0, canvas.width || DEFAULT_SIZE, canvas.height || DEFAULT_SIZE);
+
+      this.root = {
+        x: 0, // origin x
+        y: 0, // origin y
+        w: DEFAULT_SIZE - padding, // width
+        h: DEFAULT_SIZE - padding, // height
+        p: padding
+      };
+
+      this.prefix = prefix;
+      this.path = path;
+
+      return this.pack();
     }
   }]);
 
@@ -825,9 +840,10 @@ var View = function () {
   }, {
     key: "getSettingsValues",
     value: function getSettingsValues() {
+      var p = parseInt(this.$padding.value);
       return {
         'prefix': this.$prefix.value,
-        'padding': parseInt(this.$padding.value),
+        'padding': Number.isInteger(p) ? p : 0,
         'path': this.$path.value
       };
     }

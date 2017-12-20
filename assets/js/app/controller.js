@@ -92,13 +92,15 @@ export default class Controller {
     this.loadInProgress = false;
     this.imgQueued = 0;
     this.imgLoaded = 0;
-    var css = this.texturePacker.pack();
+    let css = this.texturePacker.pack();
     this.view.setCSSValue(css);
   }
 
   updateSettingsValues (settings) {
     console.log('update input values', settings);
     this.store.saveSettings(settings);
+    let css = this.texturePacker.updateSettings(settings);
+    this.view.setCSSValue(css);
   }
 
 }
