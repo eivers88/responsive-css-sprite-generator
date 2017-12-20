@@ -5,6 +5,12 @@ let autoprefixer = require('gulp-autoprefixer');
 let sourcemaps = require('gulp-sourcemaps');
 let browserSync = require('browser-sync').create();
 
+let usemin = require('gulp-usemin');
+let uglify = require('gulp-uglify');
+let htmlmin = require('gulp-htmlmin');
+let cleanCss = require('gulp-clean-css');
+let rev = require('gulp-rev');
+
 /**
  * STYLESHEETS
  * */
@@ -51,17 +57,37 @@ gulp.task('lint', () => {
 });
 
 /**
+ * USEMIN
+ * */
+
+gulp.task('usemin', function() {
+  return gulp.src('./src/index.html')
+    .pipe(usemin({
+      html: [ htmlmin({ collapseWhitespace: true }) ],
+      jsAttributes : {
+        async: true
+      },
+      js: [ uglify(), rev() ],
+      inlinecss: [ cleanCss(), 'concat' ]
+    }))
+    .pipe(gulp.dest('./'));
+});
+
+/**
  * WATCH
  * */
 
 gulp.task('watch', ['clean:sass', 'lint'], function() {
 
     browserSync.init({
-        server: "./"
+        server: {
+          baseDir: './',
+          index: './src/index.html'
+        }
     });
 
     gulp.watch('./assets/js/bundle.js').on('change', browserSync.reload);
-    gulp.watch('./*.html').on('change', browserSync.reload);
+    gulp.watch('./src/*.html').on('change', browserSync.reload);
     gulp.watch('./assets/styles/**/*.scss', ['sass']);
 
 });

@@ -26,9 +26,14 @@
     "expose-loader": "^0.7.4",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
+    "gulp-clean-css": "^3.9.0",
     "gulp-eslint": "^4.0.0",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-rev": "^8.1.0",
     "gulp-ruby-sass": "^2.1.1",
     "gulp-sourcemaps": "^2.6.1",
+    "gulp-uglify": "^3.0.0",
+    "gulp-usemin": "^0.3.28",
     "webpack": "^3.10.0"
   },
   "dependencies": {
