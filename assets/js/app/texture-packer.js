@@ -1,3 +1,7 @@
+const GITHUB_URL = '/*\nResponsive CSS Sprite created using: ' +
+  'http://responsive-css.us/\n' +
+  '*/\n\n';
+
 function findNode(root, w, h) {
   if (root.used) {
     return findNode(root.right, w, h) || findNode(root.down, w, h);
@@ -95,8 +99,16 @@ export default class TexturePacker {
     let canvas = this.canvas;
     let ctx = canvas.getContext('2d');
     let pad = this.root.p;
+    let prefix = this.prefix;
     let width = this.root.w + pad;
     let height = this.root.h + pad;
+
+    let computedCSS = '';
+    let selectorsString = '';
+    let globalString = '\n{display:inline-block; overflow:hidden; ' +
+      'background-repeat: no-repeat;\n' +
+      `background-image:url(${this.path});}\n\n`;
+    let spriteString = '';
 
     canvas.width = width;
     canvas.height = height;
@@ -118,9 +130,21 @@ export default class TexturePacker {
         ctx.stroke();
 
         ctx.drawImage(texture.img, texture.fit.x + pad, texture.fit.y + pad);
+
+        selectorsString += '.' + prefix + texture.name + (i === this.textures.length - 1 ? ' ' : ', ');
+
+        spriteString += `.${prefix + texture.name} {width: ${texture.w}px; ` +
+          `height: ${texture.h}px; ` +
+          `background-position: ${(((texture.fit.x + pad) / (width - texture.w)) * 100).toPrecision(6)}% ` +
+          `${(((texture.fit.y + pad) / (height - texture.h)) * 100).toPrecision(6)}%; ` +
+          `background-size: ${((width / texture.w) * 100).toPrecision(6)}%; }\n`;
+
       }
     }
 
+    computedCSS = GITHUB_URL + selectorsString + globalString + spriteString;
+
+    console.log(computedCSS);
   }
 
   update() {

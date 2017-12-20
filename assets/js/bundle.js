@@ -509,6 +509,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var GITHUB_URL = '/*\nResponsive CSS Sprite created using: ' + 'http://responsive-css.us/\n' + '*/\n\n';
+
 function findNode(root, w, h) {
   if (root.used) {
     return findNode(root.right, w, h) || findNode(root.down, w, h);
@@ -620,8 +622,14 @@ var TexturePacker = function () {
       var canvas = this.canvas;
       var ctx = canvas.getContext('2d');
       var pad = this.root.p;
+      var prefix = this.prefix;
       var width = this.root.w + pad;
       var height = this.root.h + pad;
+
+      var computedCSS = '';
+      var selectorsString = '';
+      var globalString = '\n{display:inline-block; overflow:hidden; ' + 'background-repeat: no-repeat;\n' + ('background-image:url(' + this.path + ');}\n\n');
+      var spriteString = '';
 
       canvas.width = width;
       canvas.height = height;
@@ -643,8 +651,16 @@ var TexturePacker = function () {
           ctx.stroke();
 
           ctx.drawImage(texture.img, texture.fit.x + pad, texture.fit.y + pad);
+
+          selectorsString += '.' + prefix + texture.name + (i === this.textures.length - 1 ? ' ' : ', ');
+
+          spriteString += '.' + (prefix + texture.name) + ' {width: ' + texture.w + 'px; ' + ('height: ' + texture.h + 'px; ') + ('background-position: ' + ((texture.fit.x + pad) / (width - texture.w) * 100).toPrecision(6) + '% ') + (((texture.fit.y + pad) / (height - texture.h) * 100).toPrecision(6) + '%; ') + ('background-size: ' + (width / texture.w * 100).toPrecision(6) + '%; }\n');
         }
       }
+
+      computedCSS = GITHUB_URL + selectorsString + globalString + spriteString;
+
+      console.log(computedCSS);
     }
   }, {
     key: 'update',
