@@ -314,7 +314,7 @@ var Controller = function () {
       if (e.target && e.target.classList.contains('remove')) {
         e.target.parentNode.parentNode.removeChild(e.target.parentNode);
         var css = this.texturePacker.remove(parseInt(e.target.parentNode.getAttribute('data-id')));
-        this.view.setCSSValue(css);
+        this.updateCSS(css);
       }
     }
   }, {
@@ -336,7 +336,7 @@ var Controller = function () {
       this.imgQueued = 0;
       this.imgLoaded = 0;
       var css = this.texturePacker.pack();
-      this.view.setCSSValue(css);
+      this.updateCSS(css);
     }
   }, {
     key: 'updateSettingsValues',
@@ -344,7 +344,16 @@ var Controller = function () {
       console.log('update input values', settings);
       this.store.saveSettings(settings);
       var css = this.texturePacker.updateSettings(settings);
-      this.view.setCSSValue(css);
+      this.updateCSS(css);
+    }
+  }, {
+    key: 'updateCSS',
+    value: function updateCSS(css) {
+      if (this.texturePacker.textures.length) {
+        this.view.setCSSValue(css);
+      } else {
+        this.view.setCSSValue('');
+      }
     }
   }]);
 
@@ -857,6 +866,11 @@ var View = function () {
     key: "setCSSValue",
     value: function setCSSValue(css) {
       this.$css.value = css;
+      if (css !== '') {
+        this.$dropbox.classList.remove('is-empty');
+      } else {
+        this.$dropbox.classList.add('is-empty');
+      }
     }
   }]);
 

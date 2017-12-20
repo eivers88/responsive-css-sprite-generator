@@ -103,6 +103,11 @@ export default class View {
 
   setCSSValue (css) {
     this.$css.value = css;
+    if(css !== '') {
+      this.$dropbox.classList.remove('is-empty')
+    } else  {
+      this.$dropbox.classList.add('is-empty')
+    }
   }
 
 }

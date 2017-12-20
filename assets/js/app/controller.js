@@ -71,7 +71,7 @@ export default class Controller {
     if(e.target && e.target.classList.contains('remove')) {
       e.target.parentNode.parentNode.removeChild(e.target.parentNode);
       let css = this.texturePacker.remove(parseInt(e.target.parentNode.getAttribute('data-id')));
-      this.view.setCSSValue(css);
+      this.updateCSS(css);
     }
   }
 
@@ -93,14 +93,22 @@ export default class Controller {
     this.imgQueued = 0;
     this.imgLoaded = 0;
     let css = this.texturePacker.pack();
-    this.view.setCSSValue(css);
+    this.updateCSS(css);
   }
 
   updateSettingsValues (settings) {
     console.log('update input values', settings);
     this.store.saveSettings(settings);
     let css = this.texturePacker.updateSettings(settings);
-    this.view.setCSSValue(css);
+    this.updateCSS(css);
+  }
+
+  updateCSS (css) {
+    if(this.texturePacker.textures.length) {
+      this.view.setCSSValue(css);
+    } else {
+      this.view.setCSSValue('');
+    }
   }
 
 }
