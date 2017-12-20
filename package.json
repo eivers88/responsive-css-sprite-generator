@@ -32,7 +32,8 @@
     "webpack": "^3.10.0"
   },
   "dependencies": {
-    "clipboard": "^1.7.1"
+    "clipboard": "^1.7.1",
+    "webfontloader": "^1.6.28"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",

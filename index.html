@@ -2,69 +2,80 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Responsive CSS Sprite Generator</title>
-    <meta name="description" content="A tool for generating responsive CSS sprites.">
-    <meta name="keywords" content="Responsive,CSS,Sprite,Generator,Generated,Tool">
-    <meta name="author" content="Aaron Eivers">
-    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700" rel="stylesheet">
-    <link rel="stylesheet" href="assets/styles/normalize.css">
-    <link rel="stylesheet" href="assets/styles/main.css">
-    <link rel="icon" href="./favicon.ico?v=2" />
+  <meta charset="UTF-8">
+  <title>Responsive CSS Sprite Generator</title>
+  <meta name="description" content="A tool for generating responsive CSS sprites.">
+  <meta name="keywords" content="Responsive,CSS,Sprite,Generator,Generated,Tool">
+  <meta name="author" content="Aaron Eivers">
+  <link rel="icon" href="./favicon.ico?v=2"/>
 </head>
 
 <body>
-    <header>
-        <h1>Responsive CSS Sprite Generator<a class="github" href="https://github.com/eivers88/responsive-css-sprite-generator" target="_blank"></a></h1>
-        <h2>A tool for generating CSS sprite sheets using percentage based background positions</h2>
-        <div id="download" class="download button">
-            <span>Download</span>
-        </div>
-        <div id="copy" class="copy button" data-clipboard-target="#css">
-            <span>Copy CSS</span>
-        </div>
-        <label for="prefix">Class Prefix:&nbsp;</label>
-        <input id="prefix" type="text" name="prefix" placeholder="class prefix" value="">
-        <label for="path">&nbsp;Path:&nbsp;</label>
-        <input id="path" class="path-input" type="text" name="path" placeholder="path" value="sprite.png">
-        <label for="padding">&nbsp;Padding (px):&nbsp;</label>
-        <input id="padding" type="text" name="padding" placeholder="padding" maxlength="2" value="2">
-    </header>
+<header>
+  <h1>Responsive CSS Sprite Generator<a class="github"
+                                        href="https://github.com/eivers88/responsive-css-sprite-generator"
+                                        target="_blank"></a></h1>
+  <h2>A tool for generating CSS sprite sheets using percentage based background positions</h2>
+  <div id="download" class="download button">
+    <span>Download</span>
+  </div>
+  <div id="copy" class="copy button" data-clipboard-target="#css">
+    <span>Copy CSS</span>
+  </div>
+  <label for="prefix">Class Prefix:&nbsp;</label>
+  <input id="prefix" type="text" name="prefix" placeholder="class prefix" value="">
+  <label for="path">&nbsp;Path:&nbsp;</label>
+  <input id="path" class="path-input" type="text" name="path" placeholder="path" value="sprite.png">
+  <label for="padding">&nbsp;Padding (px):&nbsp;</label>
+  <input id="padding" type="text" name="padding" placeholder="padding" maxlength="2" value="2">
+</header>
 
-    <div class="page-wrap">
+<div class="page-wrap">
 
-        <input type="file" id="fileElem" multiple accept="image/*" style="display:none">
+  <input type="file" id="fileElem" multiple accept="image/*" style="display:none">
 
-        <section class="content">
-            <div id="fileList" class="file-list">
-            </div>
-            <div class="output">
-                <div><b>Generated Sprite</b>&nbsp;<span id="dimensions" class="dimensions"></span></div>
-                <div class="download-info">If the download button does not work, right click the sprite and select "Save Image As..."</div>
-                <div id="dropbox" class="dropbox is-empty">
-                    <canvas id="canvas" width="256" height="256"></canvas>
-                    <div class="add-files-btn"></div>
-                    <div class="add-files-text">Add some images!</div>
-                </div>
-                <div class="clear"></div>
-                <div class="result">
-                    <div><b>Generated CSS</b></div>
-                    <textarea id="css" cols="120" rows="20"></textarea>
-                </div>
-            </div>
-        </section>
-
+  <section class="content">
+    <div id="fileList" class="file-list">
     </div>
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <div class="output">
+      <div><b>Generated Sprite</b>&nbsp;<span id="dimensions" class="dimensions"></span></div>
+      <div class="download-info">If the download button does not work, right click the sprite and select "Save Image
+        As..."
+      </div>
+      <div id="dropbox" class="dropbox is-empty">
+        <canvas id="canvas" width="256" height="256"></canvas>
+        <div class="add-files-btn"></div>
+        <div class="add-files-text">Add some images!</div>
+      </div>
+      <div class="clear"></div>
+      <div class="result">
+        <div><b>Generated CSS</b></div>
+        <textarea id="css" cols="120" rows="20"></textarea>
+      </div>
+    </div>
+  </section>
 
-        ga('create', 'UA-70842502-1', 'auto');
-        ga('send', 'pageview');
-    </script>
-    <script src="assets/js/bundle.js" async></script>
+</div>
+
+<link rel="stylesheet" href="assets/styles/normalize.css">
+<link rel="stylesheet" href="assets/styles/main.css">
+<script>
+  (function (i, s, o, g, r, a, m) {
+    i['GoogleAnalyticsObject'] = r;
+    i[r] = i[r] || function () {
+      (i[r].q = i[r].q || []).push(arguments)
+    }, i[r].l = 1 * new Date();
+    a = s.createElement(o),
+      m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    m.parentNode.insertBefore(a, m)
+  })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+  ga('create', 'UA-70842502-1', 'auto');
+  ga('send', 'pageview');
+</script>
+<script src="assets/js/bundle.js" async></script>
 
 </body>
 
