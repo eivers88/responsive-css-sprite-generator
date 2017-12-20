@@ -1,5 +1,6 @@
-const GITHUB_URL = '/*\nResponsive CSS Sprite created using: ' +
-  'http://responsive-css.us/\n' +
+const DEFAULT_SIZE = 256;
+const GITHUB_URL = '/**\nResponsive CSS Sprite created using: ' +
+  'https://responsive-css.us/\n' +
   '*/\n\n';
 
 function findNode(root, w, h) {
@@ -24,20 +25,20 @@ export default class TexturePacker {
   constructor(canvas, {padding, prefix, path}) {
 
     this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+
     this.textures = [];
 
     this.root = {
       x: 0, // origin x
       y: 0, // origin y
-      w: 256 - padding, // width
-      h: 256 - padding, // height
+      w: DEFAULT_SIZE - padding, // width
+      h: DEFAULT_SIZE - padding, // height
       p: padding
     };
 
     this.prefix = prefix;
     this.path = path;
-
-    console.log('packer', this);
 
   }
 
@@ -97,7 +98,7 @@ export default class TexturePacker {
     // TODO: Calc CSS output
 
     let canvas = this.canvas;
-    let ctx = canvas.getContext('2d');
+    let ctx = this.ctx;
     let pad = this.root.p;
     let prefix = this.prefix;
     let width = this.root.w + pad;
@@ -144,11 +145,50 @@ export default class TexturePacker {
 
     computedCSS = GITHUB_URL + selectorsString + globalString + spriteString;
 
-    console.log(computedCSS);
+    return computedCSS;
+  }
+
+  pack () {
+    this.sort();
+    this.fit();
+    return this.draw();
+  }
+
+  remove (id) {
+
+    console.log('remove ', id);
+
+    for(let i = this.textures.length; i--;) {
+      let texture = this.textures[i];
+      if(texture.id === id) {
+        this.textures.splice(i, 1);
+        break;
+      }
+    }
+
+    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    let pad = this.root.p;
+
+    // reset the root
+    this.root = {
+      x: 0, // origin x
+      y: 0, // origin y
+      w: DEFAULT_SIZE - pad, // width
+      h: DEFAULT_SIZE - pad, // height
+      p: pad
+    };
+
+    let css = this.pack();
+
+    return css;
+
   }
 
   update() {
-    // TODO: Update texture packer when settings change or images are added/removed
+
+    console.log('TODO: Update texture packer when settings change');
+
   }
 
 }

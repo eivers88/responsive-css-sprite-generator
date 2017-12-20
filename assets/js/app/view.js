@@ -100,4 +100,8 @@ export default class View {
     this.$listItems.appendChild(li);
   }
 
+  setCSSValue (css) {
+    this.$css.value = css;
+  }
+
 }

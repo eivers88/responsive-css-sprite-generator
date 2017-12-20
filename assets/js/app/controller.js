@@ -70,13 +70,13 @@ export default class Controller {
     }
     if(e.target && e.target.classList.contains('remove')) {
       e.target.parentNode.parentNode.removeChild(e.target.parentNode);
-      // TODO: update texture packer
+      let css = this.texturePacker.remove(parseInt(e.target.parentNode.getAttribute('data-id')));
+      this.view.setCSSValue(css);
     }
   }
 
 
   onLoadSuccess (texture) {
-
     this.texturePacker.addTexture(texture);
 
     this.imgLoaded++;
@@ -92,9 +92,8 @@ export default class Controller {
     this.loadInProgress = false;
     this.imgQueued = 0;
     this.imgLoaded = 0;
-    this.texturePacker.sort();
-    this.texturePacker.fit();
-    this.texturePacker.draw();
+    var css = this.texturePacker.pack();
+    this.view.setCSSValue(css);
   }
 
   updateSettingsValues (settings) {

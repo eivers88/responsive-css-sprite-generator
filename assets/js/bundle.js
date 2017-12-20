@@ -313,13 +313,13 @@ var Controller = function () {
       }
       if (e.target && e.target.classList.contains('remove')) {
         e.target.parentNode.parentNode.removeChild(e.target.parentNode);
-        // TODO: update texture packer
+        var css = this.texturePacker.remove(parseInt(e.target.parentNode.getAttribute('data-id')));
+        this.view.setCSSValue(css);
       }
     }
   }, {
     key: 'onLoadSuccess',
     value: function onLoadSuccess(texture) {
-
       this.texturePacker.addTexture(texture);
 
       this.imgLoaded++;
@@ -335,9 +335,8 @@ var Controller = function () {
       this.loadInProgress = false;
       this.imgQueued = 0;
       this.imgLoaded = 0;
-      this.texturePacker.sort();
-      this.texturePacker.fit();
-      this.texturePacker.draw();
+      var css = this.texturePacker.pack();
+      this.view.setCSSValue(css);
     }
   }, {
     key: 'updateSettingsValues',
@@ -509,7 +508,8 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var GITHUB_URL = '/*\nResponsive CSS Sprite created using: ' + 'http://responsive-css.us/\n' + '*/\n\n';
+var DEFAULT_SIZE = 256;
+var GITHUB_URL = '/**\nResponsive CSS Sprite created using: ' + 'https://responsive-css.us/\n' + '*/\n\n';
 
 function findNode(root, w, h) {
   if (root.used) {
@@ -537,20 +537,20 @@ var TexturePacker = function () {
     _classCallCheck(this, TexturePacker);
 
     this.canvas = canvas;
+    this.ctx = canvas.getContext('2d');
+
     this.textures = [];
 
     this.root = {
       x: 0, // origin x
       y: 0, // origin y
-      w: 256 - padding, // width
-      h: 256 - padding, // height
+      w: DEFAULT_SIZE - padding, // width
+      h: DEFAULT_SIZE - padding, // height
       p: padding
     };
 
     this.prefix = prefix;
     this.path = path;
-
-    console.log('packer', this);
   }
 
   _createClass(TexturePacker, [{
@@ -620,7 +620,7 @@ var TexturePacker = function () {
       // TODO: Calc CSS output
 
       var canvas = this.canvas;
-      var ctx = canvas.getContext('2d');
+      var ctx = this.ctx;
       var pad = this.root.p;
       var prefix = this.prefix;
       var width = this.root.w + pad;
@@ -660,12 +660,51 @@ var TexturePacker = function () {
 
       computedCSS = GITHUB_URL + selectorsString + globalString + spriteString;
 
-      console.log(computedCSS);
+      return computedCSS;
+    }
+  }, {
+    key: 'pack',
+    value: function pack() {
+      this.sort();
+      this.fit();
+      return this.draw();
+    }
+  }, {
+    key: 'remove',
+    value: function remove(id) {
+
+      console.log('remove ', id);
+
+      for (var i = this.textures.length; i--;) {
+        var texture = this.textures[i];
+        if (texture.id === id) {
+          this.textures.splice(i, 1);
+          break;
+        }
+      }
+
+      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      var pad = this.root.p;
+
+      // reset the root
+      this.root = {
+        x: 0, // origin x
+        y: 0, // origin y
+        w: DEFAULT_SIZE - pad, // width
+        h: DEFAULT_SIZE - pad, // height
+        p: pad
+      };
+
+      var css = this.pack();
+
+      return css;
     }
   }, {
     key: 'update',
     value: function update() {
-      // TODO: Update texture packer when settings change or images are added/removed
+
+      console.log('TODO: Update texture packer when settings change');
     }
   }]);
 
@@ -797,6 +836,11 @@ var View = function () {
     value: function addListItem(item) {
       var li = this.template.listItem(item);
       this.$listItems.appendChild(li);
+    }
+  }, {
+    key: "setCSSValue",
+    value: function setCSSValue(css) {
+      this.$css.value = css;
     }
   }]);
 
