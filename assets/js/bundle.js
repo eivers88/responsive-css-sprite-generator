@@ -178,7 +178,7 @@ function debounce(func, wait, immediate) {
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _store = __webpack_require__(3);
@@ -209,19 +209,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var app = {
 
-  start: function start() {
+    start: function start() {
 
-    var template = new _templates2.default();
+        var template = new _templates2.default();
 
-    var store = new _store2.default('responsive-css-sprite-generator');
-    var view = new _view2.default(template);
+        var store = new _store2.default('responsive-css-sprite-generator');
+        var view = new _view2.default(template);
 
-    new _controller2.default(store, view);
+        new _controller2.default(store, view);
 
-    new _clipboard2.default('#copy');
+        new _clipboard2.default('#copy');
 
-    console.log('app started!');
-  }
+        console.log('app started!');
+    }
 
 };
 
@@ -709,7 +709,7 @@ var TexturePacker = function () {
         }
       }
 
-      this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
       var pad = this.root.p;
 

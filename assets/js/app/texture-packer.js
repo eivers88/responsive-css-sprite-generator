@@ -164,7 +164,7 @@ export default class TexturePacker {
       }
     }
 
-    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     let pad = this.root.p;
 
