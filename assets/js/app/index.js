@@ -2,6 +2,7 @@ import Store from './store';
 import View from './view';
 import Controller from './controller';
 import Template from './templates';
+import Clipboard from 'clipboard';
 
 /**
  * App structure inspired by https://github.com/tastejs/todomvc/tree/gh-pages/examples/vanilla-es6
@@ -17,6 +18,8 @@ let app = {
     let view = new View(template);
 
     new Controller(store, view);
+
+    new Clipboard('#copy');
 
     console.log('app started!');
 

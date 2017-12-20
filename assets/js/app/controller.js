@@ -19,6 +19,7 @@ export default class Controller {
     this.view.bindFileExplorer(this.addImages.bind(this));
     this.view.bindDropboxImages(this.addImages.bind(this));
     this.view.bindRemoveBtn(this.removeImage.bind(this));
+    this.view.bindDownloadBtn(this.download.bind(this));
     this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
     this.texturePacker = new TexturePacker(this.view.$canvas, this.view.getSettingsValues());
@@ -71,7 +72,7 @@ export default class Controller {
     if(e.target && e.target.classList.contains('remove')) {
       e.target.parentNode.parentNode.removeChild(e.target.parentNode);
       let css = this.texturePacker.remove(parseInt(e.target.parentNode.getAttribute('data-id')));
-      this.updateCSS(css);
+      this.update(css);
     }
   }
 
@@ -93,22 +94,32 @@ export default class Controller {
     this.imgQueued = 0;
     this.imgLoaded = 0;
     let css = this.texturePacker.pack();
-    this.updateCSS(css);
+    this.update(css);
   }
 
   updateSettingsValues (settings) {
     console.log('update input values', settings);
     this.store.saveSettings(settings);
     let css = this.texturePacker.updateSettings(settings);
-    this.updateCSS(css);
+    this.update(css);
   }
 
-  updateCSS (css) {
+  update (css) {
     if(this.texturePacker.textures.length) {
       this.view.setCSSValue(css);
     } else {
       this.view.setCSSValue('');
     }
+  }
+
+
+  download() {
+    let a = document.createElement('a');
+    a.setAttribute('target', '_blank');
+    a.href = this.texturePacker.canvas.toDataURL();
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
 }

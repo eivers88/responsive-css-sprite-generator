@@ -1,5 +1,5 @@
 const DEFAULT_SIZE = 256;
-const GITHUB_URL = '/**\nResponsive CSS Sprite created using: ' +
+const GITHUB_URL = '/*\nResponsive CSS Sprite created using: ' +
   'https://responsive-css.us/\n' +
   '*/\n\n';
 
@@ -127,8 +127,8 @@ export default class TexturePacker {
       if(texture.fit) {
 
         // turn on for testing
-        ctx.fillRect(texture.fit.x + pad, texture.fit.y + pad, texture.w, texture.h);
-        ctx.stroke();
+        // ctx.fillRect(texture.fit.x + pad, texture.fit.y + pad, texture.w, texture.h);
+        // ctx.stroke();
 
         ctx.drawImage(texture.img, texture.fit.x + pad, texture.fit.y + pad);
 
@@ -182,6 +182,8 @@ export default class TexturePacker {
   }
 
   updateSettings({padding, prefix, path}) {
+
+    let canvas = this.canvas;
 
     this.ctx.clearRect(0, 0, canvas.width || DEFAULT_SIZE, canvas.height || DEFAULT_SIZE);
 

@@ -20,6 +20,7 @@ export default class View {
     this.$path = qs("#path");
     this.$canvas = qs("#canvas");
     this.$css = qs("#css");
+    this.$download = qs("#download");
     this.dimensions = qs("#dimensions");
     this.$dropbox = qs("#dropbox");
     this.$fileList.appendChild(this.$listItems);
@@ -79,6 +80,10 @@ export default class View {
 
   bindRemoveBtn (handler) {
     $on(this.$fileList, 'click', handler);
+  }
+
+  bindDownloadBtn(handler) {
+    $on(this.$download, 'click', handler);
   }
 
   setSettingsValues (settings) {
