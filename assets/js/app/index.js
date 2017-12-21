@@ -28,7 +28,7 @@ let app = {
       }
     });
 
-    console.log('app started!');
+    // app started!
 
   }
 

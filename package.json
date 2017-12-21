@@ -4,7 +4,7 @@
   "description": "http://responsive-css.us/",
   "main": "gulpfile.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "eslint ./assets/js/app/**/*.js",
     "build": "gulp usemin",
     "start": "concurrently \"gulp watch\" \"webpack --watch\""
   },
@@ -24,11 +24,11 @@
     "babel-preset-es2015": "^6.24.1",
     "browser-sync": "^2.19.0",
     "concurrently": "^3.5.1",
+    "eslint": "^4.13.1",
     "expose-loader": "^0.7.4",
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.0.0",
     "gulp-clean-css": "^3.9.0",
-    "gulp-eslint": "^4.0.0",
     "gulp-htmlmin": "^3.0.0",
     "gulp-rev": "^8.1.0",
     "gulp-ruby-sass": "^2.1.1",
@@ -40,18 +40,5 @@
   "dependencies": {
     "clipboard": "^1.7.1",
     "webfontloader": "^1.6.28"
-  },
-  "eslintConfig": {
-    "extends": "eslint:recommended",
-    "rules": {
-      "no-console": "warn"
-    },
-    "env": {
-      "browser": true,
-      "es6": true
-    },
-    "parserOptions": {
-      "sourceType": "module"
-    }
   }
 }

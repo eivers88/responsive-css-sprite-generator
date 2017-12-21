@@ -244,7 +244,7 @@ var app = {
       }
     });
 
-    console.log('app started!');
+    // app started!
   }
 
 };
@@ -363,22 +363,22 @@ var View = function () {
     }
 
     this.template = template;
-    this.$fileInput = (0, _helpers.qs)("#fileElem");
-    this.$fileList = (0, _helpers.qs)("#fileList");
+    this.$fileInput = (0, _helpers.qs)('#fileElem');
+    this.$fileList = (0, _helpers.qs)('#fileList');
     this.$listItems = document.createElement('ul');
-    this.$prefix = (0, _helpers.qs)("#prefix");
-    this.$padding = (0, _helpers.qs)("#padding");
-    this.$path = (0, _helpers.qs)("#path");
-    this.$canvas = (0, _helpers.qs)("#canvas");
-    this.$css = (0, _helpers.qs)("#css");
-    this.$download = (0, _helpers.qs)("#download");
-    this.dimensions = (0, _helpers.qs)("#dimensions");
-    this.$dropbox = (0, _helpers.qs)("#dropbox");
+    this.$prefix = (0, _helpers.qs)('#prefix');
+    this.$padding = (0, _helpers.qs)('#padding');
+    this.$path = (0, _helpers.qs)('#path');
+    this.$canvas = (0, _helpers.qs)('#canvas');
+    this.$css = (0, _helpers.qs)('#css');
+    this.$download = (0, _helpers.qs)('#download');
+    this.dimensions = (0, _helpers.qs)('#dimensions');
+    this.$dropbox = (0, _helpers.qs)('#dropbox');
     this.$fileList.appendChild(this.$listItems);
   }
 
   _createClass(View, [{
-    key: "bindFileExplorer",
+    key: 'bindFileExplorer',
     value: function bindFileExplorer(handler) {
       var _this = this;
 
@@ -395,7 +395,7 @@ var View = function () {
       });
     }
   }, {
-    key: "bindDropboxImages",
+    key: 'bindDropboxImages',
     value: function bindDropboxImages(handler) {
 
       (0, _helpers.$on)(this.$dropbox, 'dragenter', function (e) {
@@ -419,7 +419,7 @@ var View = function () {
       });
     }
   }, {
-    key: "bindSettingsInputs",
+    key: 'bindSettingsInputs',
     value: function bindSettingsInputs(handler) {
       var _this2 = this;
 
@@ -432,24 +432,24 @@ var View = function () {
       (0, _helpers.$on)(this.$path, 'keyup', (0, _helpers.debounce)(returnValues, 250, false));
     }
   }, {
-    key: "bindRemoveBtn",
+    key: 'bindRemoveBtn',
     value: function bindRemoveBtn(handler) {
       (0, _helpers.$on)(this.$fileList, 'click', handler);
     }
   }, {
-    key: "bindDownloadBtn",
+    key: 'bindDownloadBtn',
     value: function bindDownloadBtn(handler) {
       (0, _helpers.$on)(this.$download, 'click', handler);
     }
   }, {
-    key: "setSettingsValues",
+    key: 'setSettingsValues',
     value: function setSettingsValues(settings) {
       this.$prefix.value = settings.prefix;
       this.$padding.value = settings.padding;
       this.$path.value = settings.path;
     }
   }, {
-    key: "getSettingsValues",
+    key: 'getSettingsValues',
     value: function getSettingsValues() {
       var p = parseInt(this.$padding.value);
       return {
@@ -459,13 +459,13 @@ var View = function () {
       };
     }
   }, {
-    key: "addListItem",
+    key: 'addListItem',
     value: function addListItem(item) {
       var li = this.template.listItem(item);
       this.$listItems.appendChild(li);
     }
   }, {
-    key: "setCSSValue",
+    key: 'setCSSValue',
     value: function setCSSValue(css) {
       this.$css.value = css;
       if (css !== '') {
@@ -526,8 +526,6 @@ var Controller = function () {
     this.view.bindSettingsInputs(this.updateSettingsValues.bind(this));
 
     this.texturePacker = new _texturePacker2.default(this.view.$canvas, this.view.getSettingsValues());
-
-    // console.log(this)
   }
 
   _createClass(Controller, [{
@@ -535,7 +533,7 @@ var Controller = function () {
     value: function addImages(data) {
 
       if (this.loadInProgress) {
-        console.log('Cannot add images while load is in progress');
+        // Cannot add images while load is in progress
         return;
       }
 
@@ -543,7 +541,7 @@ var Controller = function () {
 
       // add only image files to our file list
       for (var prop in data) {
-        if (data[prop].type === "image/png" || data[prop].type === "image/jpeg") {
+        if (data[prop].type === 'image/png' || data[prop].type === 'image/jpeg') {
           files.push(data[prop]);
         }
       }
@@ -569,7 +567,7 @@ var Controller = function () {
     key: 'removeImage',
     value: function removeImage(e) {
       if (this.loadInProgress) {
-        console.log('Cannot remove image while load is in progress');
+        // Cannot remove image while load is in progress
         return;
       }
       if (e.target && e.target.classList.contains('remove')) {
@@ -592,7 +590,7 @@ var Controller = function () {
   }, {
     key: 'loadComplete',
     value: function loadComplete() {
-      console.log('all files loaded!');
+      // all files loaded!
       this.loadInProgress = false;
       this.imgQueued = 0;
       this.imgLoaded = 0;
@@ -602,7 +600,7 @@ var Controller = function () {
   }, {
     key: 'updateSettingsValues',
     value: function updateSettingsValues(settings) {
-      console.log('update input values', settings);
+      // update input values
       this.store.saveSettings(settings);
       var css = this.texturePacker.updateSettings(settings);
       this.update(css);

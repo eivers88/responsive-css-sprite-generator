@@ -24,14 +24,12 @@ export default class Controller {
 
     this.texturePacker = new TexturePacker(this.view.$canvas, this.view.getSettingsValues());
 
-    // console.log(this)
-
   }
 
   addImages (data) {
 
     if(this.loadInProgress) {
-      console.log('Cannot add images while load is in progress');
+      // Cannot add images while load is in progress
       return;
     }
 
@@ -39,7 +37,7 @@ export default class Controller {
 
     // add only image files to our file list
     for(let prop in data) {
-      if(data[prop].type === "image/png" || data[prop].type === "image/jpeg") {
+      if(data[prop].type === 'image/png' || data[prop].type === 'image/jpeg') {
         files.push(data[prop]);
       }
     }
@@ -66,7 +64,7 @@ export default class Controller {
 
   removeImage (e) {
     if(this.loadInProgress) {
-      console.log('Cannot remove image while load is in progress');
+      // Cannot remove image while load is in progress
       return;
     }
     if(e.target && e.target.classList.contains('remove')) {
@@ -89,7 +87,7 @@ export default class Controller {
   }
 
   loadComplete () {
-    console.log('all files loaded!');
+    // all files loaded!
     this.loadInProgress = false;
     this.imgQueued = 0;
     this.imgLoaded = 0;
@@ -98,7 +96,7 @@ export default class Controller {
   }
 
   updateSettingsValues (settings) {
-    console.log('update input values', settings);
+    // update input values
     this.store.saveSettings(settings);
     let css = this.texturePacker.updateSettings(settings);
     this.update(css);

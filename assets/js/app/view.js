@@ -12,17 +12,17 @@ export default class View {
     }
 
     this.template = template;
-    this.$fileInput = qs("#fileElem");
-    this.$fileList = qs("#fileList");
+    this.$fileInput = qs('#fileElem');
+    this.$fileList = qs('#fileList');
     this.$listItems = document.createElement('ul');
-    this.$prefix = qs("#prefix");
-    this.$padding = qs("#padding");
-    this.$path = qs("#path");
-    this.$canvas = qs("#canvas");
-    this.$css = qs("#css");
-    this.$download = qs("#download");
-    this.dimensions = qs("#dimensions");
-    this.$dropbox = qs("#dropbox");
+    this.$prefix = qs('#prefix');
+    this.$padding = qs('#padding');
+    this.$path = qs('#path');
+    this.$canvas = qs('#canvas');
+    this.$css = qs('#css');
+    this.$download = qs('#download');
+    this.dimensions = qs('#dimensions');
+    this.$dropbox = qs('#dropbox');
     this.$fileList.appendChild(this.$listItems);
 
   }
@@ -70,7 +70,7 @@ export default class View {
 
   bindSettingsInputs (handler) {
 
-    let returnValues = () => {handler(this.getSettingsValues())};
+    let returnValues = () => {handler(this.getSettingsValues());};
 
     $on(this.$prefix, 'keyup', debounce(returnValues, 250, false));
     $on(this.$padding, 'keyup', debounce(returnValues, 250, false));
@@ -98,7 +98,7 @@ export default class View {
       'prefix': this.$prefix.value,
       'padding': Number.isInteger(p) ? p : 0,
       'path': this.$path.value
-    }
+    };
   }
 
   addListItem(item) {
@@ -109,9 +109,9 @@ export default class View {
   setCSSValue (css) {
     this.$css.value = css;
     if(css !== '') {
-      this.$dropbox.classList.remove('is-empty')
+      this.$dropbox.classList.remove('is-empty');
     } else  {
-      this.$dropbox.classList.add('is-empty')
+      this.$dropbox.classList.add('is-empty');
     }
   }
 
