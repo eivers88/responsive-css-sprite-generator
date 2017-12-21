@@ -5,8 +5,9 @@
   "main": "gulpfile.js",
   "scripts": {
     "test": "eslint ./assets/js/app/**/*.js",
-    "build": "gulp usemin",
-    "start": "concurrently \"gulp watch\" \"webpack --watch\""
+    "build": "eslint ./assets/js/app/**/*.js && gulp",
+    "build-server": "gulp build-server",
+    "dev": "concurrently \"gulp watch\" \"webpack --watch\""
   },
   "repository": {
     "type": "git",
