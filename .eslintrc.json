@@ -18,5 +18,8 @@
       "always"
     ],
     "no-console": "warn"
+  },
+  "globals": {
+    "ga": true
   }
 }

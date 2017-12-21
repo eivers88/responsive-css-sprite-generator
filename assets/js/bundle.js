@@ -352,6 +352,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var instance = null;
 
+function scrollIntoView(eleID) {
+  var e = (0, _helpers.qs)(eleID).getBoundingClientRect();
+  var h = (0, _helpers.qs)('#header').getBoundingClientRect();
+  window.scrollTo(0, e.top - h.height - 100);
+}
+
 var View = function () {
   function View(template) {
     _classCallCheck(this, View);
@@ -371,10 +377,20 @@ var View = function () {
     this.$path = (0, _helpers.qs)('#path');
     this.$canvas = (0, _helpers.qs)('#canvas');
     this.$css = (0, _helpers.qs)('#css');
+    this.$copy = (0, _helpers.qs)('#copy');
     this.$download = (0, _helpers.qs)('#download');
     this.dimensions = (0, _helpers.qs)('#dimensions');
     this.$dropbox = (0, _helpers.qs)('#dropbox');
     this.$fileList.appendChild(this.$listItems);
+
+    (0, _helpers.$on)(this.$copy, 'click', function () {
+      scrollIntoView('#css');
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Copy CSS',
+        eventAction: 'click'
+      });
+    });
   }
 
   _createClass(View, [{
@@ -387,7 +403,11 @@ var View = function () {
           _this.$fileInput.click();
         }
         e.preventDefault();
-        // TODO: Analytics
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'File Explorer',
+          eventAction: 'click'
+        });
       });
 
       (0, _helpers.$on)(this.$fileInput, 'change', function () {
@@ -416,6 +436,12 @@ var View = function () {
         var files = dt.files;
 
         handler(files);
+
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'File Drop',
+          eventAction: 'drop'
+        });
       });
     }
   }, {
@@ -435,11 +461,21 @@ var View = function () {
     key: 'bindRemoveBtn',
     value: function bindRemoveBtn(handler) {
       (0, _helpers.$on)(this.$fileList, 'click', handler);
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Remove Image',
+        eventAction: 'click'
+      });
     }
   }, {
     key: 'bindDownloadBtn',
     value: function bindDownloadBtn(handler) {
       (0, _helpers.$on)(this.$download, 'click', handler);
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Sprite Download',
+        eventAction: 'click'
+      });
     }
   }, {
     key: 'setSettingsValues',
@@ -649,6 +685,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var DEFAULT_SIZE = 256;
 var GITHUB_URL = '/*\nResponsive CSS Sprite created using: ' + 'https://responsive-css.us/\n' + '*/\n\n';
 
+var DEBUG = false;
+
 function findNode(root, w, h) {
   if (root.used) {
     return findNode(root.right, w, h) || findNode(root.down, w, h);
@@ -784,9 +822,10 @@ var TexturePacker = function () {
         var texture = this.textures[i];
         if (texture.fit) {
 
-          // turn on for testing
-          // ctx.fillRect(texture.fit.x + pad, texture.fit.y + pad, texture.w, texture.h);
-          // ctx.stroke();
+          if (DEBUG) {
+            ctx.fillRect(texture.fit.x + pad, texture.fit.y + pad, texture.w, texture.h);
+            ctx.stroke();
+          }
 
           ctx.drawImage(texture.img, texture.fit.x + pad, texture.fit.y + pad);
 

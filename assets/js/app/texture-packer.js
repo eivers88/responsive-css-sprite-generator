@@ -3,6 +3,8 @@ const GITHUB_URL = '/*\nResponsive CSS Sprite created using: ' +
   'https://responsive-css.us/\n' +
   '*/\n\n';
 
+const DEBUG = false;
+
 function findNode(root, w, h) {
   if (root.used) {
     return findNode(root.right, w, h) || findNode(root.down, w, h);
@@ -126,9 +128,10 @@ export default class TexturePacker {
       let texture = this.textures[i];
       if(texture.fit) {
 
-        // turn on for testing
-        // ctx.fillRect(texture.fit.x + pad, texture.fit.y + pad, texture.w, texture.h);
-        // ctx.stroke();
+        if(DEBUG) {
+          ctx.fillRect(texture.fit.x + pad, texture.fit.y + pad, texture.w, texture.h);
+          ctx.stroke();
+        }
 
         ctx.drawImage(texture.img, texture.fit.x + pad, texture.fit.y + pad);
 

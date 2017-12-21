@@ -1,6 +1,12 @@
 import {qs, $on, debounce} from './helpers';
 let instance = null;
 
+function scrollIntoView(eleID) {
+  var e = qs(eleID).getBoundingClientRect();
+  var h = qs('#header').getBoundingClientRect();
+  window.scrollTo(0, e.top - h.height - 100);
+}
+
 export default class View {
 
   constructor(template) {
@@ -20,10 +26,20 @@ export default class View {
     this.$path = qs('#path');
     this.$canvas = qs('#canvas');
     this.$css = qs('#css');
+    this.$copy = qs('#copy');
     this.$download = qs('#download');
     this.dimensions = qs('#dimensions');
     this.$dropbox = qs('#dropbox');
     this.$fileList.appendChild(this.$listItems);
+
+    $on(this.$copy, 'click', ()=>{
+      scrollIntoView('#css');
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Copy CSS',
+        eventAction: 'click'
+      });
+    });
 
   }
 
@@ -34,7 +50,11 @@ export default class View {
         this.$fileInput.click();
       }
       e.preventDefault();
-      // TODO: Analytics
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'File Explorer',
+        eventAction: 'click'
+      });
     });
 
     $on(this.$fileInput, 'change', function(){
@@ -64,6 +84,12 @@ export default class View {
 
       handler(files);
 
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'File Drop',
+        eventAction: 'drop'
+      });
+
     });
 
   }
@@ -80,10 +106,20 @@ export default class View {
 
   bindRemoveBtn (handler) {
     $on(this.$fileList, 'click', handler);
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'Remove Image',
+      eventAction: 'click'
+    });
   }
 
   bindDownloadBtn(handler) {
     $on(this.$download, 'click', handler);
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'Sprite Download',
+      eventAction: 'click'
+    });
   }
 
   setSettingsValues (settings) {
