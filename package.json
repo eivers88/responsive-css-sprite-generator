@@ -5,6 +5,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "gulp usemin",
     "start": "concurrently \"gulp watch\" \"webpack --watch\""
   },
   "repository": {
